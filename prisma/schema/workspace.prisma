@@ -1,0 +1,54 @@
+model Workspace {
+    id            String   @id @default(cuid())
+    name          String
+    slug          String   @unique
+    logo          String?
+    plan          Plan     @default(FREE)
+    inviteCode    String?  @unique
+    showAnalytics Boolean  @default(false)
+    timezone      String   @default("UTC")
+    createdAt     DateTime @default(now()) // when the workspace was created
+    updatedAt     DateTime @updatedAt // when the workspace was last updated
+    createdBy     String // who created the workspace
+    updatedBy     String // who updated the workspace
+
+    usage        Int @default(0)
+    usageLimit   Int @default(1000)
+    linksUsage   Int @default(0)
+    linksLimit   Int @default(25)
+    domainsLimit Int @default(3)
+    tagsLimit    Int @default(5)
+    usersLimit   Int @default(1)
+
+    users            WorkspaceUsers[]
+    links            Link[]
+    ProjectInvite    ProjectInvite[]
+    tags             Tag[]
+    restrictedTokens RestrictedToken[]
+}
+
+model WorkspaceUsers {
+    id          String     @id @default(cuid())
+    role        UserRole   @default(MEMBER)
+    user        User       @relation(fields: [userId], references: [id])
+    userId      String
+    workspace   Workspace? @relation(fields: [workspaceId], references: [id])
+    workspaceId String?
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+
+    @@unique([userId, workspaceId])
+    @@index([workspaceId])
+}
+
+model ProjectInvite {
+    email       String
+    expires     DateTime
+    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    workspaceId String
+    role        UserRole  @default(MEMBER)
+    createdAt   DateTime  @default(now())
+
+    @@unique([email, workspaceId])
+    @@index([workspaceId])
+}
