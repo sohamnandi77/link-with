@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { browserDeeplink } from "./utils";
 
 type DeepLinkMap = Record<
   string,
@@ -46,7 +47,7 @@ export default function UrlRedirectPage({
       return url; // Default to original URL if no deep link is available
     }
 
-    const handleRedirect = () => {
+    const handleRedirect = async () => {
       const data = {
         deepLink: generateDeepLink(decodeURIComponent(params.url), "android"),
         platform: "android",
@@ -54,24 +55,40 @@ export default function UrlRedirectPage({
       };
 
       if (data.platform === "android" || data.platform === "ios") {
-        // For mobile, try to open the app first
-        const appTimeout = setTimeout(() => {
-          window.location.href = data.url; // Fallback to web URL if app doesn't open
-        }, 2500); // Wait for 2.5 seconds before falling back
+        try {
+          await browserDeeplink(data.deepLink, { waitTimeout: 1000 });
+        } catch (error) {
+          console.log(
+            "App not installed or couldn't be opened. Redirecting to web.",
+            error,
+          );
+          window.location.href = data.url;
+        }
 
-        window.location.href = data.deepLink;
+        // // For mobile, try to open the app first
+        // const appTimeout = setTimeout(() => {
+        //   window.location.href = data.url; // Fallback to web URL if app doesn't open
+        // }, 2500); // Wait for 2.5 seconds before falling back
 
-        // If the page is still here after a short delay, the app isn't installed
-        window.onblur = () => {
-          clearTimeout(appTimeout);
-        };
+        // window.location.href = data.deepLink;
+
+        // // If the page is still here after a short delay, the app isn't installed
+        // window.onblur = () => {
+        //   clearTimeout(appTimeout);
+        // };
+
+        // // Ensure we clean up the onblur handler when the component unmounts
+        // return () => {
+        //   clearTimeout(appTimeout);
+        //   window.onblur = null;
+        // };
       } else {
         // For web, just redirect to the URL
         window.location.href = data.url;
       }
     };
 
-    handleRedirect();
+    void handleRedirect();
   }, [params.url]);
 
   return (
