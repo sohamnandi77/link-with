@@ -76,17 +76,17 @@ export default function UrlRedirectPage({
         // For mobile, try to open the app first
         const appTimeout = setTimeout(() => {
           window.location.href = data.url; // Fallback to web URL if app doesn't open
-        }, 500); // Wait for 1 seconds before falling back
+        }, 1000); // Wait for 1 seconds before falling back
         window.location.href = data.deepLink;
         // If the page is still here after a short delay, the app isn't installed
         window.onblur = () => {
           clearTimeout(appTimeout);
         };
         // Ensure we clean up the onblur handler when the component unmounts
-        return () => {
-          clearTimeout(appTimeout);
-          window.onblur = null;
-        };
+        // return () => {
+        //   clearTimeout(appTimeout);
+        //   window.onblur = null;
+        // };
       } else {
         // For web, just redirect to the URL
         window.location.href = data.url;
