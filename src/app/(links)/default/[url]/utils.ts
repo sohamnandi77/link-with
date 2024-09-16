@@ -64,8 +64,8 @@ class DeepLinker {
     this.bindEvents("remove");
   }
 
-  openURL(url: string) {
-    const dialogTimeout = 1000;
+  openURL(url: string, interval = 1000) {
+    const dialogTimeout = interval;
     setTimeout(() => {
       if (this.hasFocus && this.options.onIgnored) {
         this.options.onIgnored();

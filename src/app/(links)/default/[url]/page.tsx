@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import DeepLinker from "./utils";
 
 type DeepLinkMap = Record<
   string,
@@ -53,37 +54,17 @@ export default function UrlRedirectPage({
       };
 
       if (data.platform === "android" || data.platform === "ios") {
-        // const linker = new DeepLinker({
-        //   onIgnored: () => {
-        //     console.log("Browser failed to respond to the deep link");
-        //     window.location.href = data.url;
-        //   },
-        //   onFallback: () => {
-        //     console.log(
-        //       "App not installed or deep link failed. Redirecting to web.",
-        //     );
-        //     window.location.href = data.url;
-        //   },
-        //   onReturn: () => {
-        //     console.log("User returned from the native app");
-        //   },
-        // });
-        // linker.openURL(data.deepLink);
-        // return () => linker.destroy();
-        // For mobile, try to open the app first
-        // const appTimeout = setTimeout(() => {
-        //   window.location.href = data.url; // Fallback to web URL if app doesn't open
-        // }, 1000); // Wait for 1 seconds before falling back
-        window.location.href = data.deepLink;
-        // If the page is still here after a short delay, the app isn't installed
-        // window.onblur = () => {
-        //   clearTimeout(appTimeout);
-        // };
-        // Ensure we clean up the onblur handler when the component unmounts
-        return () => {
-          // clearTimeout(appTimeout);
-          window.onblur = null;
-        };
+        const linker = new DeepLinker({
+          onIgnored: () => {
+            window.location.href = data.url;
+          },
+          onFallback: () => {
+            window.location.href = data.url;
+          },
+        });
+        linker.openURL(data.deepLink);
+
+        return () => linker.destroy();
       } else {
         // For web, just redirect to the URL
         window.location.href = data.url;
