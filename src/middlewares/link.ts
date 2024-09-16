@@ -11,6 +11,7 @@ import { getHeaders } from "@/middlewares/utils/get-headers";
 import { getLinkViaEdge } from "@/middlewares/utils/get-link-via-edge";
 import { isSupportedDeeplinkProtocol } from "@/middlewares/utils/is-supported-deeplink-protocol";
 import { parse } from "@/middlewares/utils/parse";
+import RedirectMiddleware from "./redirect";
 
 export default async function LinkMiddleware(req: NextRequest) {
   const { domain, fullKey: originalKey } = parse(req);
@@ -235,17 +236,5 @@ export default async function LinkMiddleware(req: NextRequest) {
   }
 
   // regular redirect
-  return createResponseWithCookie(
-    NextResponse.redirect(
-      getFinalUrl(url, {
-        req,
-        clickId,
-      }),
-      {
-        ...getHeaders(shouldIndex),
-        status: key === "_root" ? 301 : 302,
-      },
-    ),
-    { clickId, path: `/${originalKey}` },
-  );
+  return RedirectMiddleware(req, url, key, clickId, shouldIndex, originalKey);
 }
