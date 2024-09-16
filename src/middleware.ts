@@ -42,13 +42,11 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
 
   // for App
   if (APP_HOSTNAMES.has(domain)) {
-    console.log("app middleware");
     return AppMiddleware(req);
   }
 
   // for API
   if (API_HOSTNAMES.has(domain)) {
-    console.log("api middleware");
     return ApiMiddleware(req);
   }
 
@@ -57,17 +55,14 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
     domain === env.NEXT_PUBLIC_APP_DOMAIN &&
     DEFAULT_REDIRECTS[key as keyof typeof DEFAULT_REDIRECTS]
   ) {
-    console.log("default redirect");
     return NextResponse.redirect(
       DEFAULT_REDIRECTS[key as keyof typeof DEFAULT_REDIRECTS],
     );
   }
 
   if (isValidUrl(fullKey)) {
-    console.log("link middleware");
     return CreateLinkMiddleware(req);
   }
 
-  console.log("link middleware");
   return LinkMiddleware(req);
 }

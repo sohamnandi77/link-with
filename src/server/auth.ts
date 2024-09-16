@@ -67,8 +67,6 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account }) {
-      console.log({ user, account });
-
       if (!user.email) return false; // Prevent sign in without email or blacklisted email
 
       if ("lockedAt" in user && user?.lockedAt) {

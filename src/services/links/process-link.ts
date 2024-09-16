@@ -80,11 +80,11 @@ export async function processLink<T extends Record<string, unknown>>({
 
   // if domain is not defined, set it to the workspace's primary domain
   if (!domain) {
-    domain = env.NEXT_PUBLIC_APP_DOMAIN;
+    domain = env.NEXT_PUBLIC_APP_SHORT_DOMAIN;
   }
 
   // checks for dub.sh links
-  if (domain === env.NEXT_PUBLIC_APP_DOMAIN) {
+  if (domain === env.NEXT_PUBLIC_APP_SHORT_DOMAIN) {
     // check if user exists (if userId is passed)
     if (userId) {
       const userExists = await checkIfUserExists(userId);
