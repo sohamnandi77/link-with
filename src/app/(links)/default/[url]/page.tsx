@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { browserDeeplink } from "./utils";
+import DeepLinker from "./utils";
 
 type DeepLinkMap = Record<
   string,
@@ -55,28 +55,43 @@ export default function UrlRedirectPage({
       };
 
       if (data.platform === "android" || data.platform === "ios") {
-        try {
-          await browserDeeplink(data.deepLink, { waitTimeout: 1000 });
-        } catch (error) {
-          console.log(
-            "App not installed or couldn't be opened. Redirecting to web.",
-            error,
-          );
-          window.location.href = data.url;
-        }
+        const linker = new DeepLinker({
+          onIgnored: () => {
+            console.log("Browser failed to respond to the deep link");
+            window.location.href = data.url;
+          },
+          onFallback: () => {
+            console.log(
+              "App not installed or deep link failed. Redirecting to web.",
+            );
+            window.location.href = data.url;
+          },
+          onReturn: () => {
+            console.log("User returned from the native app");
+          },
+        });
 
+        linker.openURL(data.deepLink);
+
+        return () => linker.destroy();
+        // try {
+        //   await browserDeeplink(data.deepLink, { waitTimeout: 1000 });
+        // } catch (error) {
+        //   console.log(
+        //     "App not installed or couldn't be opened. Redirecting to web.",
+        //     error,
+        //   );
+        //   window.location.href = data.url;
+        // }
         // // For mobile, try to open the app first
         // const appTimeout = setTimeout(() => {
         //   window.location.href = data.url; // Fallback to web URL if app doesn't open
         // }, 2500); // Wait for 2.5 seconds before falling back
-
         // window.location.href = data.deepLink;
-
         // // If the page is still here after a short delay, the app isn't installed
         // window.onblur = () => {
         //   clearTimeout(appTimeout);
         // };
-
         // // Ensure we clean up the onblur handler when the component unmounts
         // return () => {
         //   clearTimeout(appTimeout);
