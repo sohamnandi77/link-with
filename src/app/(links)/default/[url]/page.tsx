@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import DeepLinker from "./utils";
 
 type DeepLinkMap = Record<
   string,
@@ -21,8 +20,7 @@ export default function UrlRedirectPage({
     const deepLinkMap: DeepLinkMap = {
       "youtube.com": {
         web: "https://www.youtube.com/watch?v=",
-        android:
-          "intent://www.youtube.com/watch?v=%s#Intent;package=com.google.android.youtube;scheme=https;end",
+        android: `intent://www.youtube.com/watch?v=%s#Intent;package=com.google.android.youtube;scheme=https;end;S.browser_fallback_url=${encodeURIComponent(decodeURIComponent(params.url))}`,
         ios: "youtube://www.youtube.com/watch?v=",
       },
       // Add more platforms as needed
@@ -55,48 +53,40 @@ export default function UrlRedirectPage({
       };
 
       if (data.platform === "android" || data.platform === "ios") {
-        const linker = new DeepLinker({
-          onIgnored: () => {
-            console.log("Browser failed to respond to the deep link");
-            window.location.href = data.url;
-          },
-          onFallback: () => {
-            console.log(
-              "App not installed or deep link failed. Redirecting to web.",
-            );
-            window.location.href = data.url;
-          },
-          onReturn: () => {
-            console.log("User returned from the native app");
-          },
-        });
+        // const linker = new DeepLinker({
+        //   onIgnored: () => {
+        //     console.log("Browser failed to respond to the deep link");
+        //     window.location.href = data.url;
+        //   },
+        //   onFallback: () => {
+        //     console.log(
+        //       "App not installed or deep link failed. Redirecting to web.",
+        //     );
+        //     window.location.href = data.url;
+        //   },
+        //   onReturn: () => {
+        //     console.log("User returned from the native app");
+        //   },
+        // });
 
-        linker.openURL(data.deepLink);
+        // linker.openURL(data.deepLink);
 
-        return () => linker.destroy();
-        // try {
-        //   await browserDeeplink(data.deepLink, { waitTimeout: 1000 });
-        // } catch (error) {
-        //   console.log(
-        //     "App not installed or couldn't be opened. Redirecting to web.",
-        //     error,
-        //   );
-        //   window.location.href = data.url;
-        // }
-        // // For mobile, try to open the app first
-        // const appTimeout = setTimeout(() => {
-        //   window.location.href = data.url; // Fallback to web URL if app doesn't open
-        // }, 2500); // Wait for 2.5 seconds before falling back
-        // window.location.href = data.deepLink;
-        // // If the page is still here after a short delay, the app isn't installed
-        // window.onblur = () => {
-        //   clearTimeout(appTimeout);
-        // };
-        // // Ensure we clean up the onblur handler when the component unmounts
-        // return () => {
-        //   clearTimeout(appTimeout);
-        //   window.onblur = null;
-        // };
+        // return () => linker.destroy();
+
+        // For mobile, try to open the app first
+        const appTimeout = setTimeout(() => {
+          window.location.href = data.url; // Fallback to web URL if app doesn't open
+        }, 500); // Wait for 1 seconds before falling back
+        window.location.href = data.deepLink;
+        // If the page is still here after a short delay, the app isn't installed
+        window.onblur = () => {
+          clearTimeout(appTimeout);
+        };
+        // Ensure we clean up the onblur handler when the component unmounts
+        return () => {
+          clearTimeout(appTimeout);
+          window.onblur = null;
+        };
       } else {
         // For web, just redirect to the URL
         window.location.href = data.url;
