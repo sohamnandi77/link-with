@@ -83,10 +83,10 @@ export default function UrlRedirectPage({
           clearTimeout(appTimeout);
         };
         // Ensure we clean up the onblur handler when the component unmounts
-        // return () => {
-        //   clearTimeout(appTimeout);
-        //   window.onblur = null;
-        // };
+        return () => {
+          clearTimeout(appTimeout);
+          window.onblur = null;
+        };
       } else {
         // For web, just redirect to the URL
         window.location.href = data.url;
