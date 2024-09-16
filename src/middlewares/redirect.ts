@@ -40,7 +40,6 @@ export default async function RedirectMiddleware(
       ),
       {
         ...getHeaders(shouldIndex),
-        status: key === "_root" ? 301 : 302,
       },
     ),
     { clickId, path: `/${originalKey}` },
