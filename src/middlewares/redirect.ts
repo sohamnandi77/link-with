@@ -33,11 +33,8 @@ export default async function RedirectMiddleware(
   }
 
   return createResponseWithCookie(
-    NextResponse.rewrite(
-      new URL(
-        `/default/${encodeURIComponent(getFinalUrl(url, { req }))}`,
-        req.url,
-      ),
+    NextResponse.redirect(
+      `intent://www.youtube.com/watch?v=sFMRqxCexDk#Intent;package=com.google.android.youtube;scheme=https;end`,
       {
         ...getHeaders(shouldIndex),
       },
