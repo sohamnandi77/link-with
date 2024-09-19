@@ -2,7 +2,6 @@
 
 import { DeepLinker } from "@/lib/deeplinker";
 import { constructStoreUrl } from "@/lib/functions/construct-store-url";
-import { useSearchParams } from "next/navigation";
 import { useLayoutEffect } from "react";
 
 const handleStoreRedirectionFallback = (url: string, storeUrl: string) => {
@@ -10,10 +9,10 @@ const handleStoreRedirectionFallback = (url: string, storeUrl: string) => {
     const storeDeepLink = constructStoreUrl(storeUrl);
     const storeLinker = new DeepLinker({
       onIgnored: () => {
-        window.location.href = storeUrl;
+        window.location.href = url;
       },
       onFallback: () => {
-        window.location.href = storeUrl;
+        window.location.href = url;
       },
     });
     storeLinker.openURL(storeDeepLink);
@@ -41,15 +40,15 @@ const handleDeeplinkFallback = (
 };
 
 export default function UrlRedirectPage() {
-  const searchParams = useSearchParams();
-  const url = searchParams?.get("url") ?? "";
-  const deeplinkUrl = searchParams?.get("deeplink") ?? "";
-  const storeUrl = searchParams?.get("store") ?? "";
-  // const url = "https://www.youtube.com/watch?v=sFMRqxCexDk";
-  // const deeplinkUrl =
-  //   "intent://youtube.com/watch?v=sFMRqxCexDk#Intent;scheme=https;package=com.google.android.youtube;S.browser_fallback_url=https://www.youtube.com/watch?v=sFMRqxCexDk;end;";
-  // const storeUrl =
-  //   "https://play.google.com/store/apps/details?id=com.google.android.youtube";
+  // const searchParams = useSearchParams();
+  // const url = searchParams?.get("url") ?? "";
+  // const deeplinkUrl = searchParams?.get("deeplink") ?? "";
+  // const storeUrl = searchParams?.get("store") ?? "";
+  const url = "https://www.youtube.com/watch?v=sFMRqxCexDk";
+  const deeplinkUrl =
+    "intent://www.youtube.com/watch?v=sFMRqxCexDk#Intent;scheme=https;package=com.google.android.youtube;end;";
+  const storeUrl =
+    "https://play.google.com/store/apps/details?id=com.google.android.youtube";
 
   useLayoutEffect(() => {
     // Record Link
