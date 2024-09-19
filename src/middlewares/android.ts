@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { APPS } from "./deeplink/apps-config";
+import { SUPPORTED_DOMAINS } from "./deeplink/apps-config";
 import SupportedAppMiddleware from "./supported-app";
 import { createResponseWithCookie } from "./utils/create-response-with-cookie";
 import { getFinalUrl } from "./utils/get-final-url";
@@ -29,7 +29,7 @@ export default async function AndroidMiddleware(props: AndroidMiddlewareProps) {
   } = props;
   if (android) {
     // check if it is an app store link -> url of store link
-    if (android.includes(APPS.GOOGLE_PLAYSTORE.DOMAIN)) {
+    if (android.includes(SUPPORTED_DOMAINS.GOOGLE_PLAY_STORE)) {
       return createResponseWithCookie(
         NextResponse.rewrite(
           new URL(
@@ -43,8 +43,8 @@ export default async function AndroidMiddleware(props: AndroidMiddlewareProps) {
         { clickId, path: `/${originalKey}` },
       );
     }
-    // check it is a uri scheme
-    if (!android.includes("https://") || !android.includes("http://")) {
+    // check it is a intent url
+    if (android.includes("intent://")) {
       return createResponseWithCookie(
         NextResponse.rewrite(
           new URL(

@@ -14,7 +14,24 @@ export type AppUrl = {
   appStore?: string;
 };
 
-export function convertToAppUrl(url: string): AppUrl {
+export function convertToAndroidAppUrl(url: string): AppUrl {
+  if (!isValidUrl(url)) return {};
+  const urlObj = new URL(url);
+  const hostname = urlObj.hostname;
+  const domain = hostname.replace("www.", "").toLowerCase();
+
+  if (domain in APPS) {
+    const apps = APPS[domain as keyof typeof APPS];
+
+    return {
+      android: getChromeIntentUrl(urlObj, apps.PLAY_STORE_ID),
+      playStore: getPlayStoreUrl(apps.PLAY_STORE_ID),
+    };
+  }
+  return {};
+}
+
+export function convertToIosAppUrl(url: string): AppUrl {
   if (!isValidUrl(url)) return {};
   const urlObj = new URL(url);
   const hostname = urlObj.hostname;
@@ -25,8 +42,6 @@ export function convertToAppUrl(url: string): AppUrl {
     const uriScheme = UriScheme[domain];
     if (typeof uriScheme === "function") {
       return {
-        android: getChromeIntentUrl(urlObj, apps.PLAY_STORE_ID),
-        playStore: getPlayStoreUrl(apps.PLAY_STORE_ID),
         ios: uriScheme(urlObj),
         appStore: getAppleStoreUrl(apps.APP_STORE_ID),
       };

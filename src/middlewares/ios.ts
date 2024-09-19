@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { APPS } from "./deeplink/apps-config";
+import { SUPPORTED_DOMAINS } from "./deeplink/apps-config";
 import SupportedAppMiddleware from "./supported-app";
 import { createResponseWithCookie } from "./utils/create-response-with-cookie";
 import { getFinalUrl } from "./utils/get-final-url";
@@ -29,7 +29,7 @@ export default async function IosMiddleware(props: IosMiddlewareProps) {
   } = props;
   if (ios) {
     // check if it is an app store link -> url of store link
-    if (ios.includes(APPS.APPLE_APP_STORE.DOMAIN)) {
+    if (ios.includes(SUPPORTED_DOMAINS.APPLE_APP_STORE)) {
       return createResponseWithCookie(
         NextResponse.rewrite(
           new URL(

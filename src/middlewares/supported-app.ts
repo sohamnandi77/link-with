@@ -1,5 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { convertToAppUrl } from "./deeplink/convert-to-app-url";
+import {
+  convertToAndroidAppUrl,
+  convertToIosAppUrl,
+} from "./deeplink/convert-to-app-url";
 import { createResponseWithCookie } from "./utils/create-response-with-cookie";
 import { getFinalUrl } from "./utils/get-final-url";
 import { getHeaders } from "./utils/get-headers";
@@ -30,55 +33,52 @@ export default async function SupportedAppMiddleware(
     originalKey,
   } = props;
 
-  const appUrl = convertToAppUrl(url);
-
-  console.log("Supported App", appUrl);
-
-  if (ua === "ios" && appUrl?.ios) {
-    return createResponseWithCookie(
-      NextResponse.rewrite(
-        new URL(
-          `/default/${encodeURIComponent(
-            getFinalUrl({
-              url,
-              req,
-              deeplink: appUrl.ios,
-              storeUrl: appUrl?.appStore ?? "",
-              collectAnalytics,
-            }),
-          )}`,
-          req.url,
+  if (ua === "ios") {
+    const appUrl = convertToIosAppUrl(url);
+    if (appUrl?.ios)
+      return createResponseWithCookie(
+        NextResponse.rewrite(
+          new URL(
+            `/default/${encodeURIComponent(
+              getFinalUrl({
+                url,
+                req,
+                deeplink: appUrl.ios,
+                storeUrl: appUrl?.appStore ?? "",
+                collectAnalytics,
+              }),
+            )}`,
+            req.url,
+          ),
+          {
+            ...getHeaders(shouldIndex),
+          },
         ),
-        {
-          ...getHeaders(shouldIndex),
-        },
-      ),
-      { clickId, path: `/${originalKey}` },
-    );
-  }
-
-  if (ua === "android" && appUrl?.android) {
-    console.log("Supported App Android");
-    return createResponseWithCookie(
-      NextResponse.rewrite(
-        new URL(
-          `/default/${encodeURIComponent(
-            getFinalUrl({
-              url,
-              req,
-              deeplink: appUrl.android,
-              storeUrl: appUrl?.playStore ?? "",
-              collectAnalytics,
-            }),
-          )}`,
-          req.url,
+        { clickId, path: `/${originalKey}` },
+      );
+  } else if (ua === "android") {
+    const appUrl = convertToAndroidAppUrl(url);
+    if (appUrl?.android)
+      return createResponseWithCookie(
+        NextResponse.rewrite(
+          new URL(
+            `/default/${encodeURIComponent(
+              getFinalUrl({
+                url,
+                req,
+                deeplink: appUrl.android,
+                storeUrl: appUrl?.playStore ?? "",
+                collectAnalytics,
+              }),
+            )}`,
+            req.url,
+          ),
+          {
+            ...getHeaders(shouldIndex),
+          },
         ),
-        {
-          ...getHeaders(shouldIndex),
-        },
-      ),
-      { clickId, path: `/${originalKey}` },
-    );
+        { clickId, path: `/${originalKey}` },
+      );
   }
 
   return WebMiddleware({

@@ -1,9 +1,13 @@
-import { APPS } from "./apps-config";
+import { APPS, SUPPORTED_DOMAINS } from "./apps-config";
 
 export const getPlayStoreUrl = (playStoreId: string): string => {
   const root = "https://play.google.com";
 
-  if (playStoreId === APPS.GOOGLE_PLAYSTORE.PLAY_STORE_ID || !playStoreId) {
+  if (
+    playStoreId ===
+      APPS?.[SUPPORTED_DOMAINS.GOOGLE_PLAY_STORE]?.PLAY_STORE_ID ||
+    !playStoreId
+  ) {
     return root;
   }
 
@@ -43,5 +47,7 @@ export const getChromeIntentUrl = (
 };
 
 export const getAppleStoreUrl = (appStoreId: string): string => {
-  return `https://apps.apple.com/app/${appStoreId}`;
+  const root = "https://apps.apple.com";
+  if (!appStoreId) return root;
+  return `${root}/app/${appStoreId}`;
 };
