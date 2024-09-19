@@ -26,7 +26,7 @@ export const getChromeIntentUrl = (
     const search = url.search;
 
     let intentUrl = `intent://`;
-    if (hostname) intentUrl += hostname;
+    if (hostname) intentUrl += url.hostname;
     else return undefined;
     if (pathname) intentUrl += pathname;
     if (search) intentUrl += search;
@@ -35,7 +35,7 @@ export const getChromeIntentUrl = (
     else return undefined;
     const fallbackUrl = url?.toString();
     if (fallbackUrl) {
-      intentUrl += `S.browser_fallback_url=${decodeURIComponent(fallbackUrl)};`;
+      intentUrl += `S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};`;
     }
     intentUrl += "end;";
 
