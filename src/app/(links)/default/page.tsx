@@ -2,6 +2,7 @@
 
 import { DeepLinker } from "@/lib/deeplinker";
 import { constructStoreUrl } from "@/lib/functions/construct-store-url";
+import { useSearchParams } from "next/navigation";
 import { useLayoutEffect } from "react";
 
 const handleStoreRedirectionFallback = (url: string, storeUrl: string) => {
@@ -40,15 +41,10 @@ const handleDeeplinkFallback = (
 };
 
 export default function UrlRedirectPage() {
-  // const searchParams = useSearchParams();
-  // const url = searchParams?.get("url") ?? "";
-  // const deeplinkUrl = searchParams?.get("deeplink") ?? "";
-  // const storeUrl = searchParams?.get("store") ?? "";
-  const url = "https://www.youtube.com/watch?v=sFMRqxCexDk";
-  const deeplinkUrl =
-    "intent://www.youtube.com/watch?v=sFMRqxCexDk#Intent;scheme=https;package=com.google.android.youtube;end;";
-  const storeUrl =
-    "https://play.google.com/store/apps/details?id=com.google.android.youtube";
+  const searchParams = useSearchParams();
+  const url = searchParams?.get("url") ?? "";
+  const deeplinkUrl = searchParams?.get("deeplink") ?? "";
+  const storeUrl = searchParams?.get("store") ?? "";
 
   useLayoutEffect(() => {
     // Record Link
