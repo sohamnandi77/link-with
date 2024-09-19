@@ -60,7 +60,9 @@ export default function UrlRedirectPage() {
 
   return (
     <main className="flex h-screen w-screen items-center justify-center">
-      Redirecting...
+      <div>{url}</div>
+      <div>{deeplinkUrl}</div>
+      <div>{storeUrl}</div>
     </main>
   );
 }
