@@ -31,13 +31,13 @@ export const getChromeIntentUrl = (
     if (pathname) intentUrl += pathname;
     if (search) intentUrl += search;
     if (packageName)
-      intentUrl += `#Intent;scheme=https;package=${packageName};`;
+      intentUrl += `#Intent;scheme=https;package=${packageName};end;`;
     else return undefined;
-    const fallbackUrl = url?.toString();
-    if (fallbackUrl) {
-      intentUrl += `S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};`;
-    }
-    intentUrl += "end;";
+    // const fallbackUrl = url?.toString();
+    // if (fallbackUrl) {
+    //   intentUrl += `S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};`;
+    // }
+    // intentUrl += "end;";
 
     return intentUrl;
   } catch (error) {
