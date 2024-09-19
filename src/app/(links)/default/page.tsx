@@ -2,7 +2,6 @@
 
 import { DeepLinker } from "@/lib/deeplinker";
 import { constructStoreUrl } from "@/lib/functions/construct-store-url";
-import { getCookie } from "@/lib/functions/get-cookie";
 import { useLayoutEffect } from "react";
 
 const handleStoreRedirectionFallback = (url: string, storeUrl: string) => {
@@ -38,6 +37,13 @@ const handleDeeplinkFallback = (
     },
   });
   linker.openURL(deeplink);
+};
+
+const getCookie = (name: string): string | undefined => {
+  if (typeof document === "undefined") return undefined;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift();
 };
 
 export default function UrlRedirectPage() {
