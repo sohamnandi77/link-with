@@ -42,15 +42,16 @@ const handleDeeplinkFallback = (
 
 export default function UrlRedirectPage() {
   const searchParams = useSearchParams();
-  const link = searchParams?.get("url");
-  const deeplink = searchParams?.get("deeplink");
-  const store = searchParams?.get("store");
+  const url = searchParams?.get("url") ?? "";
+  const deeplinkUrl = searchParams?.get("deeplink") ?? "";
+  const storeUrl = searchParams?.get("store") ?? "";
+  console.log({ url, deeplinkUrl, storeUrl });
 
   useLayoutEffect(() => {
     // Record Link
-    const url = decodeURIComponent(link ?? "");
-    const deeplinkUrl = decodeURIComponent(deeplink ?? "");
-    const storeUrl = decodeURIComponent(store ?? "");
+    // const url = decodeURIComponent(link ?? "");
+    // const deeplinkUrl = decodeURIComponent(deeplink ?? "");
+    // const storeUrl = decodeURIComponent(store ?? "");
 
     if (deeplinkUrl) {
       handleDeeplinkFallback(url, deeplinkUrl, storeUrl);
@@ -59,16 +60,11 @@ export default function UrlRedirectPage() {
     } else {
       window.location.href = url;
     }
-  }, [deeplink, link, store]);
+  }, [deeplinkUrl, storeUrl, url]);
 
   return (
     <main className="flex h-screen w-screen items-center justify-center">
       Redirecting...
-      <div>deepLink: {deeplink}</div>
-      <div>decode deepLink: {decodeURIComponent(deeplink ?? "")}</div>
-      <div>store: {store}</div>
-      <div>decode store: {decodeURIComponent(store ?? "")}</div>
-      <div>url: {link}</div>
     </main>
   );
 }
