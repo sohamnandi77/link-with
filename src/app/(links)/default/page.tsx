@@ -58,7 +58,7 @@ export default function UrlRedirectPage() {
 
   return (
     <main className="flex h-screen w-screen items-center justify-center">
-      Redirecting...
+      {deeplink}
     </main>
   );
 }
