@@ -10,27 +10,16 @@ interface IosMiddlewareProps {
   key: string;
   url: string;
   collectAnalytics: boolean;
-  clickId: string;
-  originalKey: string;
   ios: string | null;
 }
 
 export default async function IosMiddleware(props: IosMiddlewareProps) {
-  const {
-    req,
-    ios,
-    key,
-    shouldIndex,
-    url,
-    collectAnalytics,
-    clickId,
-    originalKey,
-  } = props;
+  const { req, ios, key, shouldIndex, url, collectAnalytics } = props;
   if (ios) {
     // check if it is an app store link -> url of store link
     if (ios.includes(SUPPORTED_DOMAINS.APPLE_APP_STORE)) {
       return addCookiesForRedirectResponse(
-        NextResponse.rewrite("/default", {
+        NextResponse.rewrite("/default/", {
           ...getHeaders(shouldIndex),
         }),
         {
@@ -44,7 +33,7 @@ export default async function IosMiddleware(props: IosMiddlewareProps) {
     // check it is a uri scheme
     if (!ios.includes("https://") || !ios.includes("http://")) {
       return addCookiesForRedirectResponse(
-        NextResponse.rewrite("/default", {
+        NextResponse.rewrite("/default/", {
           ...getHeaders(shouldIndex),
         }),
         {
@@ -63,9 +52,7 @@ export default async function IosMiddleware(props: IosMiddlewareProps) {
       ua: "ios",
       shouldIndex,
       url: ios,
-      clickId,
       collectAnalytics,
-      originalKey,
     });
   }
 
@@ -75,8 +62,6 @@ export default async function IosMiddleware(props: IosMiddlewareProps) {
     ua: "ios",
     shouldIndex,
     url,
-    clickId,
     collectAnalytics,
-    originalKey,
   });
 }

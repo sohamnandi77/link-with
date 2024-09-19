@@ -10,27 +10,16 @@ interface AndroidMiddlewareProps {
   key: string;
   url: string;
   collectAnalytics: boolean;
-  clickId: string;
-  originalKey: string;
   android: string | null;
 }
 
 export default async function AndroidMiddleware(props: AndroidMiddlewareProps) {
-  const {
-    req,
-    android,
-    key,
-    shouldIndex,
-    url,
-    collectAnalytics,
-    clickId,
-    originalKey,
-  } = props;
+  const { req, android, key, shouldIndex, url, collectAnalytics } = props;
   if (android) {
     // check if it is an app store link -> url of store link
     if (android.includes(SUPPORTED_DOMAINS.GOOGLE_PLAY_STORE)) {
       return addCookiesForRedirectResponse(
-        NextResponse.rewrite("/default", {
+        NextResponse.rewrite("/default/", {
           ...getHeaders(shouldIndex),
         }),
         {
@@ -44,7 +33,7 @@ export default async function AndroidMiddleware(props: AndroidMiddlewareProps) {
     // check it is a intent url
     if (android.includes("intent://")) {
       return addCookiesForRedirectResponse(
-        NextResponse.rewrite("/default", {
+        NextResponse.rewrite("/default/", {
           ...getHeaders(shouldIndex),
         }),
         {
@@ -63,9 +52,7 @@ export default async function AndroidMiddleware(props: AndroidMiddlewareProps) {
       ua: "android",
       shouldIndex,
       url: android,
-      clickId,
       collectAnalytics,
-      originalKey,
     });
   }
 
@@ -75,8 +62,6 @@ export default async function AndroidMiddleware(props: AndroidMiddlewareProps) {
     ua: "android",
     shouldIndex,
     url,
-    clickId,
     collectAnalytics,
-    originalKey,
   });
 }

@@ -14,29 +14,18 @@ interface SupportedAppMiddlewareProps {
   key: string;
   url: string;
   collectAnalytics: boolean;
-  clickId: string;
-  originalKey: string;
 }
 
 export default async function SupportedAppMiddleware(
   props: SupportedAppMiddlewareProps,
 ) {
-  const {
-    req,
-    key,
-    ua,
-    shouldIndex,
-    url,
-    clickId,
-    collectAnalytics,
-    originalKey,
-  } = props;
+  const { req, key, ua, shouldIndex, url, collectAnalytics } = props;
 
   if (ua === "ios") {
     const appUrl = convertToIosAppUrl(url);
     if (appUrl?.ios) {
       return addCookiesForRedirectResponse(
-        NextResponse.rewrite("/default", {
+        NextResponse.rewrite("/default/", {
           ...getHeaders(shouldIndex),
         }),
         {
@@ -52,7 +41,7 @@ export default async function SupportedAppMiddleware(
     const appUrl = convertToAndroidAppUrl(url);
     if (appUrl?.android) {
       return addCookiesForRedirectResponse(
-        NextResponse.rewrite("/default", {
+        NextResponse.rewrite("/default/", {
           ...getHeaders(shouldIndex),
         }),
         {
@@ -70,9 +59,7 @@ export default async function SupportedAppMiddleware(
     req,
     url,
     key,
-    clickId,
     shouldIndex,
-    originalKey,
     collectAnalytics,
   });
 }

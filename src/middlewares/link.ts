@@ -1,10 +1,7 @@
-import { cookies } from "next/headers";
 import { NextResponse, userAgent, type NextRequest } from "next/server";
 
 import { isDefaultDomain } from "@/lib/functions/domains";
-import { nanoid } from "@/lib/vendors/nanoid";
 import { punyEncode } from "@/lib/vendors/punycode";
-import { createResponseWithCookie } from "@/middlewares/utils/create-response-with-cookie";
 import { detectBot } from "@/middlewares/utils/detect-bot";
 import { getFinalUrl } from "@/middlewares/utils/get-final-url";
 import { getHeaders } from "@/middlewares/utils/get-headers";
@@ -102,20 +99,11 @@ export default async function LinkMiddleware(req: NextRequest) {
     }
   }
 
-  const cookieStore = cookies();
-  let clickId = cookieStore.get("dclid")?.value;
-  if (!clickId) {
-    clickId = nanoid(16);
-  }
-
   // for root domain links, if there's no destination URL, rewrite to placeholder page
   if (!url) {
-    return createResponseWithCookie(
-      NextResponse.rewrite(new URL(`/${domain}`, req.url), {
-        ...getHeaders(shouldIndex),
-      }),
-      { clickId, path: `/${originalKey}` },
-    );
+    return NextResponse.rewrite(new URL(`/${domain}`, req.url), {
+      ...getHeaders(shouldIndex),
+    });
   }
 
   const isBot = detectBot(req);
@@ -124,73 +112,58 @@ export default async function LinkMiddleware(req: NextRequest) {
 
   // rewrite to proxy page (/proxy/[domain]/[key]) if it's a bot and proxy is enabled
   if (isBot && proxy) {
-    return createResponseWithCookie(
-      NextResponse.rewrite(
-        new URL(`/proxy/${domain}/${encodeURIComponent(key)}`, req.url),
-        {
-          ...getHeaders(shouldIndex),
-        },
-      ),
-      { clickId, path: `/${originalKey}` },
+    return NextResponse.rewrite(
+      new URL(`/proxy/${domain}/${encodeURIComponent(key)}`, req.url),
+      {
+        ...getHeaders(shouldIndex),
+      },
     );
   }
 
   // rewrite to deeplink page if the link is a mailto: or tel:
   if (isSupportedDeeplinkProtocol(url)) {
-    return createResponseWithCookie(
-      NextResponse.rewrite(
-        new URL(
-          `/deeplink/${encodeURIComponent(getFinalUrl({ url, req }))}`,
-          req.url,
-        ),
-        {
-          ...getHeaders(shouldIndex),
-        },
+    return NextResponse.rewrite(
+      new URL(
+        `/deeplink/${encodeURIComponent(getFinalUrl({ url, req }))}`,
+        req.url,
       ),
-      { clickId, path: `/${originalKey}` },
+      {
+        ...getHeaders(shouldIndex),
+      },
     );
   }
 
   // rewrite to target URL if link cloaking is enabled
   if (cloaked) {
     if (iframeable) {
-      return createResponseWithCookie(
-        NextResponse.rewrite(
-          new URL(
-            `/cloaked/${encodeURIComponent(getFinalUrl({ url, req }))}`,
-            req.url,
-          ),
-          {
-            ...getHeaders(shouldIndex),
-          },
+      return NextResponse.rewrite(
+        new URL(
+          `/cloaked/${encodeURIComponent(getFinalUrl({ url, req }))}`,
+          req.url,
         ),
-        { clickId, path: `/${originalKey}` },
+        {
+          ...getHeaders(shouldIndex),
+        },
       );
     } else {
       // if link is not iframeable, use Next.js rewrite instead
-      return createResponseWithCookie(
-        NextResponse.rewrite(url, {
-          ...getHeaders(shouldIndex),
-        }),
-        { clickId, path: `/${originalKey}` },
-      );
+      return NextResponse.rewrite(url, {
+        ...getHeaders(shouldIndex),
+      });
     }
   }
 
   // redirect to geo-specific link if it is specified and the user is in the specified country
   if (geo && country) {
-    return createResponseWithCookie(
-      NextResponse.redirect(
-        getFinalUrl({
-          url: geo[country as keyof typeof geo],
-          req,
-        }),
-        {
-          ...getHeaders(shouldIndex),
-          status: key === "_root" ? 301 : 302,
-        },
-      ),
-      { clickId, path: `/${originalKey}` },
+    return NextResponse.redirect(
+      getFinalUrl({
+        url: geo[country as keyof typeof geo],
+        req,
+      }),
+      {
+        ...getHeaders(shouldIndex),
+        status: key === "_root" ? 301 : 302,
+      },
     );
   }
 
@@ -202,11 +175,9 @@ export default async function LinkMiddleware(req: NextRequest) {
     return IosMiddleware({
       url,
       req,
-      clickId,
       collectAnalytics,
       ios,
       key,
-      originalKey,
       shouldIndex,
     });
   }
@@ -218,11 +189,9 @@ export default async function LinkMiddleware(req: NextRequest) {
     return AndroidMiddleware({
       url,
       req,
-      clickId,
       collectAnalytics,
       android,
       key,
-      originalKey,
       shouldIndex,
     });
   }
@@ -234,9 +203,7 @@ export default async function LinkMiddleware(req: NextRequest) {
     req,
     url,
     key,
-    clickId,
     shouldIndex,
-    originalKey,
     collectAnalytics,
   });
 }
