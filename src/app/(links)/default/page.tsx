@@ -24,7 +24,7 @@ const handleStoreRedirectionFallback = (url: string, storeUrl: string) => {
 
 const handleDeeplinkFallback = (
   url: string,
-  deepLink: string,
+  deeplink: string,
   storeUrl: string,
 ) => {
   const linker = new DeepLinker({
@@ -37,32 +37,28 @@ const handleDeeplinkFallback = (
       else window.location.href = url;
     },
   });
-  linker.openURL(deepLink);
+  linker.openURL(deeplink);
 };
 
 export default function UrlRedirectPage() {
   const searchParams = useSearchParams();
   const url = searchParams?.get("url") ?? "";
-  const deeplinkUrl = searchParams?.get("deeplink") ?? "";
+  const deeplink = searchParams?.get("deeplink") ?? "";
   const storeUrl = searchParams?.get("store") ?? "";
 
   useLayoutEffect(() => {
-    // Record Link
-
-    if (deeplinkUrl) {
-      handleDeeplinkFallback(url, deeplinkUrl, storeUrl);
+    if (deeplink) {
+      handleDeeplinkFallback(url, deeplink, storeUrl);
     } else if (storeUrl) {
       handleStoreRedirectionFallback(url, storeUrl);
     } else {
       window.location.href = url;
     }
-  }, [deeplinkUrl, storeUrl, url]);
+  }, [deeplink, storeUrl, url]);
 
   return (
     <main className="flex h-screen w-screen items-center justify-center">
-      <div>{url}</div>
-      <div>{deeplinkUrl}</div>
-      <div>{storeUrl}</div>
+      Redirecting...
     </main>
   );
 }

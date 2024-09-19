@@ -31,7 +31,7 @@ export const getChromeIntentUrl = (
     if (pathname) intentUrl += pathname;
     if (search) intentUrl += search;
     if (packageName)
-      intentUrl += `#Intent;scheme=https;package=${packageName};end;`;
+      intentUrl += `#Intent;package=${packageName};scheme=https;end;`;
     else return undefined;
     // const fallbackUrl = url?.toString();
     // if (fallbackUrl) {
