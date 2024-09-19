@@ -30,7 +30,9 @@ model Link {
 
     // Custom device targeting
     iosTargeting     String? // custom link for iOS devices
+    iosDeepLink      Boolean? // whether to use deep linking for iOS devices
     androidTargeting String? // custom link for Android devices
+    androidDeepLink  Boolean? // whether to use deep linking for Android devices
     geoTargeting     Json? // custom link for specific countries
 
     // Tags
@@ -45,11 +47,11 @@ model Link {
     updatedBy String? // who updated the link
 
     // Link Analytics
-    showAnalytics Boolean         @default(false)
-    clicks        Int             @default(0) // number of clicks
-    uniqueClicks  Int             @default(0) // number of unique clicks
-    lastClicked   DateTime? // when the link was last clicked
-    analytics     LinkAnalytics[]
+    collectAnalytics Boolean         @default(false)
+    clicks           Int             @default(0) // number of clicks
+    uniqueClicks     Int             @default(0) // number of unique clicks
+    lastClicked      DateTime? // when the link was last clicked
+    analytics        LinkAnalytics[]
 
     // Workspace Info
     workspace   Workspace? @relation(fields: [workspaceId], references: [id], onUpdate: Cascade, onDelete: Cascade) // workspace where the link belongs to

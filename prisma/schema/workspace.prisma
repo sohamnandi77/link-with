@@ -1,16 +1,19 @@
 model Workspace {
-    id            String   @id @default(cuid())
-    name          String
-    slug          String   @unique
-    logo          String?
-    plan          Plan     @default(FREE)
-    inviteCode    String?  @unique
-    showAnalytics Boolean  @default(false)
-    timezone      String   @default("UTC")
-    createdAt     DateTime @default(now()) // when the workspace was created
-    updatedAt     DateTime @updatedAt // when the workspace was last updated
-    createdBy     String // who created the workspace
-    updatedBy     String // who updated the workspace
+    id                    String  @id @default(cuid())
+    name                  String
+    slug                  String  @unique
+    logo                  String?
+    plan                  Plan    @default(FREE)
+    inviteCode            String? @unique
+    showAnalytics         Boolean @default(false)
+    timezone              String  @default("UTC")
+    defaultExpirationLink String?
+
+    createdAt        DateTime @default(now()) // when the workspace was created
+    updatedAt        DateTime @updatedAt // when the workspace was last updated
+    createdBy        String // who created the workspace
+    updatedBy        String // who updated the workspace
+    usageLastChecked DateTime @default(now()) // when the usage was last checked
 
     usage        Int @default(0)
     usageLimit   Int @default(1000)
@@ -22,9 +25,11 @@ model Workspace {
 
     users            WorkspaceUsers[]
     links            Link[]
-    ProjectInvite    ProjectInvite[]
+    invites          ProjectInvite[]
     tags             Tag[]
     restrictedTokens RestrictedToken[]
+
+    @@index(usageLastChecked(sort: Asc))
 }
 
 model WorkspaceUsers {

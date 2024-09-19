@@ -1,10 +1,10 @@
-import { type NextRequest } from "next/server";
+import { userAgent, type NextRequest } from "next/server";
 
 export const detectBot = (req: NextRequest): boolean => {
   const url = req.nextUrl;
 
   // Check if "bot" is present in the URL query parameters
-  if (url.searchParams.get("bot")) return true;
+  if (url.searchParams.get("bot") || userAgent(req)?.isBot) return true;
 
   const ua = req.headers.get("User-Agent")?.toLowerCase(); // Lowercase for consistent matching
   if (ua) {

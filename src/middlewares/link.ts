@@ -11,7 +11,9 @@ import { getHeaders } from "@/middlewares/utils/get-headers";
 import { getLinkViaEdge } from "@/middlewares/utils/get-link-via-edge";
 import { isSupportedDeeplinkProtocol } from "@/middlewares/utils/is-supported-deeplink-protocol";
 import { parse } from "@/middlewares/utils/parse";
-import RedirectMiddleware from "./redirect";
+import AndroidMiddleware from "./android";
+import IosMiddleware from "./ios";
+import WebMiddleware from "./web";
 
 export default async function LinkMiddleware(req: NextRequest) {
   const { domain, fullKey: originalKey } = parse(req);
@@ -51,6 +53,7 @@ export default async function LinkMiddleware(req: NextRequest) {
     geoTargeting,
     expiredLink,
     banned,
+    collectAnalytics,
     shouldIndex: isIndexed,
   } = link;
 
@@ -138,9 +141,9 @@ export default async function LinkMiddleware(req: NextRequest) {
       NextResponse.rewrite(
         new URL(
           `/deeplink/${encodeURIComponent(
-            getFinalUrl(url, {
+            getFinalUrl({
+              url,
               req,
-              clickId,
             }),
           )}`,
           req.url,
@@ -160,9 +163,9 @@ export default async function LinkMiddleware(req: NextRequest) {
         NextResponse.rewrite(
           new URL(
             `/cloaked/${encodeURIComponent(
-              getFinalUrl(url, {
+              getFinalUrl({
+                url,
                 req,
-                clickId,
               }),
             )}`,
             req.url,
@@ -184,47 +187,13 @@ export default async function LinkMiddleware(req: NextRequest) {
     }
   }
 
-  // redirect to iOS link if it is specified and the user is on an iOS device
-  if (iosTargeting && userAgent(req).os?.name === "iOS") {
-    return createResponseWithCookie(
-      NextResponse.redirect(
-        getFinalUrl(iosTargeting, {
-          req,
-          clickId,
-        }),
-        {
-          ...getHeaders(shouldIndex),
-          status: key === "_root" ? 301 : 302,
-        },
-      ),
-      { clickId, path: `/${originalKey}` },
-    );
-  }
-
-  // redirect to Android link if it is specified and the user is on an Android device
-  if (androidTargeting && userAgent(req).os?.name === "Android") {
-    return createResponseWithCookie(
-      NextResponse.redirect(
-        getFinalUrl(androidTargeting, {
-          req,
-          clickId,
-        }),
-        {
-          ...getHeaders(shouldIndex),
-          status: key === "_root" ? 301 : 302,
-        },
-      ),
-      { clickId, path: `/${originalKey}` },
-    );
-  }
-
   // redirect to geo-specific link if it is specified and the user is in the specified country
   if (geoTargeting && country) {
     return createResponseWithCookie(
       NextResponse.redirect(
-        getFinalUrl(geoTargeting[country as keyof typeof geoTargeting], {
+        getFinalUrl({
+          url: geoTargeting[country as keyof typeof geoTargeting],
           req,
-          clickId,
         }),
         {
           ...getHeaders(shouldIndex),
@@ -235,6 +204,44 @@ export default async function LinkMiddleware(req: NextRequest) {
     );
   }
 
+  // redirect to iOS link if it is specified and the user is on an iOS device
+  if (userAgent(req).os?.name === "iOS") {
+    // iosMiddleware
+    return IosMiddleware({
+      url,
+      req,
+      clickId,
+      collectAnalytics,
+      ios: iosTargeting,
+      key,
+      originalKey,
+      shouldIndex,
+    });
+  }
+
+  // redirect to Android link if it is specified and the user is on an Android device
+  if (androidTargeting && userAgent(req).os?.name === "Android") {
+    // androidMiddleware
+    return AndroidMiddleware({
+      url,
+      req,
+      clickId,
+      collectAnalytics,
+      android: androidTargeting,
+      key,
+      originalKey,
+      shouldIndex,
+    });
+  }
+
   // regular redirect
-  return RedirectMiddleware(req, url, key, clickId, shouldIndex, originalKey);
+  return WebMiddleware({
+    req,
+    url,
+    key,
+    clickId,
+    shouldIndex,
+    originalKey,
+    collectAnalytics,
+  });
 }

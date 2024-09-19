@@ -4,7 +4,7 @@ interface DeepLinkerOptions {
   onReturn?: () => void;
 }
 
-class DeepLinker {
+export class DeepLinker {
   private options: DeepLinkerOptions;
   private hasFocus = true;
   private didHide = false;
@@ -74,5 +74,3 @@ class DeepLinker {
     window.location.href = url;
   }
 }
-
-export default DeepLinker;

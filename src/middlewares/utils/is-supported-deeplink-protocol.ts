@@ -4,11 +4,6 @@ const supportedDeeplinkProtocols = [
   "sms:",
   "whatsapp:",
   "tg:",
-  "skype:",
-  "viber:",
-  "fb-messenger:",
-  "slack:",
-  "youtube:",
 ];
 
 export const isSupportedDeeplinkProtocol = (url: string) => {

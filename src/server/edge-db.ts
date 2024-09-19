@@ -11,6 +11,10 @@ const createPrismaEdgeClient = () => {
     adapter,
     log:
       env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    // omit: {
+    //   user: { password: true },
+    //   restrictedToken: { hashedKey: true },
+    // },
   });
 };
 

@@ -1,78 +1,68 @@
 "use client";
 
-import { useEffect } from "react";
-import DeepLinker from "./utils";
+import { DeepLinker } from "@/lib/deeplinker";
+import { constructStoreUrl } from "@/lib/functions/construct-store-url";
+import { useSearchParams } from "next/navigation";
+import { useLayoutEffect } from "react";
 
-type DeepLinkMap = Record<
-  string,
-  {
-    web: string;
-    android: string;
-    ios: string;
+const handleStoreRedirectionFallback = (url: string, storeUrl: string) => {
+  try {
+    const storeDeepLink = constructStoreUrl(storeUrl);
+    const storeLinker = new DeepLinker({
+      onIgnored: () => {
+        window.location.href = storeUrl;
+      },
+      onFallback: () => {
+        window.location.href = storeUrl;
+      },
+    });
+    storeLinker.openURL(storeDeepLink);
+  } catch {
+    window.location.href = url;
   }
->;
+};
+
+const handleDeeplinkFallback = (
+  url: string,
+  deepLink: string,
+  storeUrl: string,
+) => {
+  const linker = new DeepLinker({
+    onIgnored: () => {
+      if (storeUrl) handleStoreRedirectionFallback(url, storeUrl);
+      else window.location.href = url;
+    },
+    onFallback: () => {
+      if (storeUrl) handleStoreRedirectionFallback(url, storeUrl);
+      else window.location.href = url;
+    },
+  });
+  linker.openURL(deepLink);
+};
 
 export default function UrlRedirectPage({
   params,
 }: {
   params: { url: string };
 }) {
-  useEffect(() => {
-    const deepLinkMap: DeepLinkMap = {
-      "youtube.com": {
-        web: "https://www.youtube.com/watch?v=",
-        android: `intent://www.youtube.com/watch?v=%s#Intent;package=com.google.android.youtube;scheme=https;S.browser_fallback_url=${encodeURIComponent(decodeURIComponent(params.url))}end;`,
-        ios: "youtube://www.youtube.com/watch?v=",
-      },
-      // Add more platforms as needed
-    };
+  const searchParams = useSearchParams();
+  const deeplink = searchParams?.get("deeplink");
+  const store = searchParams?.get("store");
 
-    function generateDeepLink(
-      url: string,
-      platform: "web" | "android" | "ios",
-    ): string {
-      const urlObj = new URL(url);
-      const host = urlObj.hostname.replace("www.", "");
-      const videoId = urlObj.searchParams.get("v");
+  useLayoutEffect(() => {
+    // Record Link
+    const url = decodeURIComponent(params.url ?? "");
+    const deepLink = decodeURIComponent(deeplink ?? "");
+    const storeUrl = decodeURIComponent(store ?? "");
 
-      if (deepLinkMap[host] && videoId) {
-        if (platform === "android") {
-          return deepLinkMap[host].android.replace("%s", videoId);
-        } else if (platform === "ios") {
-          return deepLinkMap[host].ios + videoId;
-        }
-      }
-
-      return url; // Default to original URL if no deep link is available
+    if (deepLink) {
+      handleDeeplinkFallback(url, deepLink, storeUrl);
+    } else if (storeUrl) {
+      handleStoreRedirectionFallback(url, storeUrl);
+    } else {
+      window.location.href = url;
     }
-
-    const handleRedirect = async () => {
-      const data = {
-        deepLink: generateDeepLink(decodeURIComponent(params.url), "android"),
-        platform: "android",
-        url: decodeURIComponent(params.url),
-      };
-
-      if (data.platform === "android" || data.platform === "ios") {
-        const linker = new DeepLinker({
-          onIgnored: () => {
-            window.location.href = data.url;
-          },
-          onFallback: () => {
-            window.location.href = data.url;
-          },
-        });
-        linker.openURL(data.deepLink);
-
-        return () => linker.destroy();
-      } else {
-        // For web, just redirect to the URL
-        window.location.href = data.url;
-      }
-    };
-
-    void handleRedirect();
-  }, [params.url]);
+  }, [deeplink, params.url, store]);
 
   return (
     <main className="flex h-screen w-screen items-center justify-center">

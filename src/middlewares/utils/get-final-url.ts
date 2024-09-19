@@ -10,19 +10,32 @@ const allowedQueryParams = [
   "ref",
 ];
 
-export const getFinalUrl = (
-  url: string,
-  { req, clickId }: { req: NextRequest; clickId?: string },
-) => {
+interface GetFinalUrlProps {
+  url: string;
+  req: NextRequest;
+  storeUrl?: string;
+  deeplink?: string;
+  collectAnalytics?: boolean;
+}
+
+export const getFinalUrl = (props: GetFinalUrlProps) => {
+  const { url, req, storeUrl, deeplink, collectAnalytics } = props;
   // query is the query string (e.g. d.to/github?utm_source=twitter -> ?utm_source=twitter)
   const searchParams = req.nextUrl.searchParams;
 
   // get the query params of the target url
   const urlObj = new URL(url);
 
-  if (clickId) {
-    // add clickId to the final url if it exists
-    urlObj.searchParams.set("dclid", clickId);
+  if (deeplink) {
+    urlObj.searchParams.set("deeplink", deeplink);
+  }
+
+  if (storeUrl) {
+    urlObj.searchParams.set("store", storeUrl);
+  }
+
+  if (collectAnalytics) {
+    urlObj.searchParams.set("analytics", `${collectAnalytics}`);
   }
 
   // if there are no query params, then return the target url as is (no need to parse it)
