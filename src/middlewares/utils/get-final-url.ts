@@ -13,30 +13,15 @@ const allowedQueryParams = [
 interface GetFinalUrlProps {
   url: string;
   req: NextRequest;
-  storeUrl?: string;
-  deeplink?: string;
-  collectAnalytics?: boolean;
 }
 
 export const getFinalUrl = (props: GetFinalUrlProps) => {
-  const { url, req, storeUrl, deeplink, collectAnalytics } = props;
+  const { url, req } = props;
   // query is the query string (e.g. d.to/github?utm_source=twitter -> ?utm_source=twitter)
   const searchParams = req.nextUrl.searchParams;
 
   // get the query params of the target url
   const urlObj = new URL(url);
-
-  if (deeplink) {
-    urlObj.searchParams.set("deeplink", deeplink);
-  }
-
-  if (storeUrl) {
-    urlObj.searchParams.set("store", storeUrl);
-  }
-
-  if (collectAnalytics) {
-    urlObj.searchParams.set("analytics", `${collectAnalytics}`);
-  }
 
   // if there are no query params, then return the target url as is (no need to parse it)
   if (searchParams.size === 0) return urlObj.toString();
@@ -52,6 +37,34 @@ export const getFinalUrl = (props: GetFinalUrlProps) => {
   }
 
   return urlObj.toString();
+};
+
+interface GetDeeplinkUrlProps {
+  req: NextRequest;
+  route: string;
+  storeUrl?: string;
+  deeplink?: string;
+  collectAnalytics?: boolean;
+  url?: string;
+}
+
+export const getDeeplinkUrl = (props: GetDeeplinkUrlProps) => {
+  const { route, req, storeUrl, deeplink, collectAnalytics, url } = props;
+  const urlObj = new URL(route, req.url);
+  if (url) {
+    urlObj.searchParams.set("url", url);
+  }
+  if (deeplink) {
+    urlObj.searchParams.set("deeplink", deeplink);
+  }
+  if (storeUrl) {
+    urlObj.searchParams.set("store", storeUrl);
+  }
+  if (collectAnalytics) {
+    urlObj.searchParams.set("analytics", `${collectAnalytics}`);
+  }
+
+  return urlObj;
 };
 
 // Get final cleaned url for storing in TB

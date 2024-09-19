@@ -40,18 +40,15 @@ const handleDeeplinkFallback = (
   linker.openURL(deepLink);
 };
 
-export default function UrlRedirectPage({
-  params,
-}: {
-  params: { url: string };
-}) {
+export default function UrlRedirectPage() {
   const searchParams = useSearchParams();
+  const link = searchParams?.get("url");
   const deeplink = searchParams?.get("deeplink");
   const store = searchParams?.get("store");
 
   useLayoutEffect(() => {
     // Record Link
-    const url = decodeURIComponent(params.url ?? "");
+    const url = decodeURIComponent(link ?? "");
     const deeplinkUrl = decodeURIComponent(deeplink ?? "");
     const storeUrl = decodeURIComponent(store ?? "");
 
@@ -62,7 +59,7 @@ export default function UrlRedirectPage({
     } else {
       window.location.href = url;
     }
-  }, [deeplink, params.url, store]);
+  }, [deeplink, link, store]);
 
   return (
     <main className="flex h-screen w-screen items-center justify-center">
@@ -71,7 +68,7 @@ export default function UrlRedirectPage({
       <div>decode deepLink: {decodeURIComponent(deeplink ?? "")}</div>
       <div>store: {store}</div>
       <div>decode store: {decodeURIComponent(store ?? "")}</div>
-      <div>url: {params.url}</div>
+      <div>url: {link}</div>
     </main>
   );
 }

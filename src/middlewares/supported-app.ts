@@ -4,7 +4,7 @@ import {
   convertToIosAppUrl,
 } from "./deeplink/convert-to-app-url";
 import { createResponseWithCookie } from "./utils/create-response-with-cookie";
-import { getFinalUrl } from "./utils/get-final-url";
+import { getDeeplinkUrl } from "./utils/get-final-url";
 import { getHeaders } from "./utils/get-headers";
 import WebMiddleware from "./web";
 
@@ -35,50 +35,41 @@ export default async function SupportedAppMiddleware(
 
   if (ua === "ios") {
     const appUrl = convertToIosAppUrl(url);
-    if (appUrl?.ios)
+    if (appUrl?.ios) {
+      const finalUrl = getDeeplinkUrl({
+        route: "/default",
+        req,
+        url,
+        deeplink: appUrl.ios ?? "",
+        storeUrl: appUrl?.appStore ?? "",
+        collectAnalytics,
+      });
       return createResponseWithCookie(
-        NextResponse.rewrite(
-          new URL(
-            `/default/${encodeURIComponent(
-              getFinalUrl({
-                url,
-                req,
-                deeplink: appUrl.ios ?? "",
-                storeUrl: appUrl?.appStore ?? "",
-                collectAnalytics,
-              }),
-            )}`,
-            req.url,
-          ),
-          {
-            ...getHeaders(shouldIndex),
-          },
-        ),
+        NextResponse.rewrite(finalUrl, {
+          ...getHeaders(shouldIndex),
+        }),
         { clickId, path: `/${originalKey}` },
       );
+    }
   } else if (ua === "android") {
     const appUrl = convertToAndroidAppUrl(url);
-    if (appUrl?.android)
+    if (appUrl?.android) {
+      const finalUrl = getDeeplinkUrl({
+        route: "/default",
+        req,
+        url,
+        deeplink: appUrl.android ?? "",
+        storeUrl: appUrl?.playStore ?? "",
+        collectAnalytics,
+      });
+      console.log(finalUrl);
       return createResponseWithCookie(
-        NextResponse.rewrite(
-          new URL(
-            `/default/${encodeURIComponent(
-              getFinalUrl({
-                url,
-                req,
-                deeplink: appUrl.android ?? "",
-                storeUrl: appUrl?.playStore ?? "",
-                collectAnalytics,
-              }),
-            )}`,
-            req.url,
-          ),
-          {
-            ...getHeaders(shouldIndex),
-          },
-        ),
+        NextResponse.rewrite(finalUrl, {
+          ...getHeaders(shouldIndex),
+        }),
         { clickId, path: `/${originalKey}` },
       );
+    }
   }
 
   return WebMiddleware({

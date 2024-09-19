@@ -140,12 +140,7 @@ export default async function LinkMiddleware(req: NextRequest) {
     return createResponseWithCookie(
       NextResponse.rewrite(
         new URL(
-          `/deeplink/${encodeURIComponent(
-            getFinalUrl({
-              url,
-              req,
-            }),
-          )}`,
+          `/deeplink/${encodeURIComponent(getFinalUrl({ url, req }))}`,
           req.url,
         ),
         {
@@ -162,12 +157,7 @@ export default async function LinkMiddleware(req: NextRequest) {
       return createResponseWithCookie(
         NextResponse.rewrite(
           new URL(
-            `/cloaked/${encodeURIComponent(
-              getFinalUrl({
-                url,
-                req,
-              }),
-            )}`,
+            `/cloaked/${encodeURIComponent(getFinalUrl({ url, req }))}`,
             req.url,
           ),
           {
