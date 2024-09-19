@@ -1,42 +1,42 @@
 "use client";
 
-import { DeepLinker } from "@/lib/deeplinker";
-import { constructStoreUrl } from "@/lib/functions/construct-store-url";
+// import { DeepLinker } from "@/lib/deeplinker";
+// import { constructStoreUrl } from "@/lib/functions/construct-store-url";
 
-const handleStoreRedirectionFallback = (url: string, storeUrl: string) => {
-  try {
-    const storeDeepLink = constructStoreUrl(storeUrl);
-    const storeLinker = new DeepLinker({
-      onIgnored: () => {
-        window.location.href = url;
-      },
-      onFallback: () => {
-        window.location.href = url;
-      },
-    });
-    storeLinker.openURL(storeDeepLink);
-  } catch {
-    window.location.href = url;
-  }
-};
+// const handleStoreRedirectionFallback = (url: string, storeUrl: string) => {
+//   try {
+//     const storeDeepLink = constructStoreUrl(storeUrl);
+//     const storeLinker = new DeepLinker({
+//       onIgnored: () => {
+//         window.location.href = url;
+//       },
+//       onFallback: () => {
+//         window.location.href = url;
+//       },
+//     });
+//     storeLinker.openURL(storeDeepLink);
+//   } catch {
+//     window.location.href = url;
+//   }
+// };
 
-const handleDeeplinkFallback = (
-  url: string,
-  deeplink: string,
-  storeUrl: string,
-) => {
-  const linker = new DeepLinker({
-    onIgnored: () => {
-      if (storeUrl) handleStoreRedirectionFallback(url, storeUrl);
-      else window.location.href = url;
-    },
-    onFallback: () => {
-      if (storeUrl) handleStoreRedirectionFallback(url, storeUrl);
-      else window.location.href = url;
-    },
-  });
-  linker.openURL(deeplink);
-};
+// const handleDeeplinkFallback = (
+//   url: string,
+//   deeplink: string,
+//   storeUrl: string,
+// ) => {
+//   const linker = new DeepLinker({
+//     onIgnored: () => {
+//       if (storeUrl) handleStoreRedirectionFallback(url, storeUrl);
+//       else window.location.href = url;
+//     },
+//     onFallback: () => {
+//       if (storeUrl) handleStoreRedirectionFallback(url, storeUrl);
+//       else window.location.href = url;
+//     },
+//   });
+//   linker.openURL(deeplink);
+// };
 
 const getCookie = (name: string): string | undefined => {
   if (typeof document === "undefined") return undefined;
