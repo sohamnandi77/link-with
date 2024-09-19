@@ -2,7 +2,7 @@
 
 import { DeepLinker } from "@/lib/deeplinker";
 import { constructStoreUrl } from "@/lib/functions/construct-store-url";
-import { useSearchParams } from "next/navigation";
+import { getCookie } from "@/lib/functions/get-cookie";
 import { useLayoutEffect } from "react";
 
 const handleStoreRedirectionFallback = (url: string, storeUrl: string) => {
@@ -41,10 +41,14 @@ const handleDeeplinkFallback = (
 };
 
 export default function UrlRedirectPage() {
-  const searchParams = useSearchParams();
-  const url = searchParams?.get("url") ?? "";
-  const deeplink = searchParams?.get("deeplink") ?? "";
-  const storeUrl = searchParams?.get("store") ?? "";
+  const url = getCookie("url") ?? "";
+  const deeplink = getCookie("deeplink") ?? "";
+  const storeUrl = getCookie("store") ?? "";
+
+  // const searchParams = useSearchParams();
+  // const url = searchParams?.get("url") ?? "";
+  // const deeplink = searchParams?.get("deeplink") ?? "";
+  // const storeUrl = searchParams?.get("store") ?? "";
 
   useLayoutEffect(() => {
     if (deeplink) {

@@ -1,8 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { SUPPORTED_DOMAINS } from "./deeplink/apps-config";
 import SupportedAppMiddleware from "./supported-app";
-import { createResponseWithCookie } from "./utils/create-response-with-cookie";
-import { getDeeplinkUrl } from "./utils/get-final-url";
+import { addCookiesForRedirectResponse } from "./utils/create-response-with-cookie";
 import { getHeaders } from "./utils/get-headers";
 
 interface AndroidMiddlewareProps {
@@ -30,34 +29,30 @@ export default async function AndroidMiddleware(props: AndroidMiddlewareProps) {
   if (android) {
     // check if it is an app store link -> url of store link
     if (android.includes(SUPPORTED_DOMAINS.GOOGLE_PLAY_STORE)) {
-      const finalUrl = getDeeplinkUrl({
-        route: "/default",
-        req,
-        url,
-        storeUrl: android ?? "",
-        collectAnalytics,
-      });
-      return createResponseWithCookie(
-        NextResponse.rewrite(finalUrl, {
+      return addCookiesForRedirectResponse(
+        NextResponse.rewrite("/default", {
           ...getHeaders(shouldIndex),
         }),
-        { clickId, path: `/${originalKey}` },
+        {
+          url,
+          storeUrl: android ?? "",
+          collectAnalytics,
+          path: "/",
+        },
       );
     }
     // check it is a intent url
     if (android.includes("intent://")) {
-      const finalUrl = getDeeplinkUrl({
-        route: "/default",
-        req,
-        url,
-        deeplink: android ?? "",
-        collectAnalytics,
-      });
-      return createResponseWithCookie(
-        NextResponse.rewrite(finalUrl, {
+      return addCookiesForRedirectResponse(
+        NextResponse.rewrite("/default", {
           ...getHeaders(shouldIndex),
         }),
-        { clickId, path: `/${originalKey}` },
+        {
+          url,
+          deeplink: android ?? "",
+          collectAnalytics,
+          path: "/",
+        },
       );
     }
 

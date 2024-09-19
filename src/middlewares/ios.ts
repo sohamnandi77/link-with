@@ -1,8 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { SUPPORTED_DOMAINS } from "./deeplink/apps-config";
 import SupportedAppMiddleware from "./supported-app";
-import { createResponseWithCookie } from "./utils/create-response-with-cookie";
-import { getDeeplinkUrl } from "./utils/get-final-url";
+import { addCookiesForRedirectResponse } from "./utils/create-response-with-cookie";
 import { getHeaders } from "./utils/get-headers";
 
 interface IosMiddlewareProps {
@@ -30,34 +29,30 @@ export default async function IosMiddleware(props: IosMiddlewareProps) {
   if (ios) {
     // check if it is an app store link -> url of store link
     if (ios.includes(SUPPORTED_DOMAINS.APPLE_APP_STORE)) {
-      const finalUrl = getDeeplinkUrl({
-        route: "/default",
-        req,
-        url,
-        storeUrl: ios ?? "",
-        collectAnalytics,
-      });
-      return createResponseWithCookie(
-        NextResponse.rewrite(finalUrl, {
+      return addCookiesForRedirectResponse(
+        NextResponse.rewrite("/default", {
           ...getHeaders(shouldIndex),
         }),
-        { clickId, path: `/${originalKey}` },
+        {
+          url,
+          storeUrl: ios ?? "",
+          collectAnalytics,
+          path: "/",
+        },
       );
     }
     // check it is a uri scheme
     if (!ios.includes("https://") || !ios.includes("http://")) {
-      const finalUrl = getDeeplinkUrl({
-        route: "/default",
-        req,
-        url,
-        deeplink: ios ?? "",
-        collectAnalytics,
-      });
-      return createResponseWithCookie(
-        NextResponse.rewrite(finalUrl, {
+      return addCookiesForRedirectResponse(
+        NextResponse.rewrite("/default", {
           ...getHeaders(shouldIndex),
         }),
-        { clickId, path: `/${originalKey}` },
+        {
+          url,
+          deeplink: ios ?? "",
+          collectAnalytics,
+          path: "/",
+        },
       );
     }
 
