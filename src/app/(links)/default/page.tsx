@@ -46,9 +46,9 @@ const getCookie = (name: string): string | undefined => {
 };
 
 export default function UrlRedirectPage() {
-  const url = getCookie("url") ?? "";
-  const deeplink = getCookie("deeplink") ?? "";
-  const storeUrl = getCookie("store") ?? "";
+  const url = decodeURIComponent(getCookie("url") ?? "");
+  const deeplink = decodeURIComponent(getCookie("deeplink") ?? "");
+  const storeUrl = decodeURIComponent(getCookie("store") ?? "");
 
   // const searchParams = useSearchParams();
   // const url = searchParams?.get("url") ?? "";
