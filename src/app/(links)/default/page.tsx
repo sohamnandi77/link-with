@@ -57,8 +57,10 @@ export default function UrlRedirectPage() {
   }, [deeplink, storeUrl, url]);
 
   return (
-    <main className="flex h-screen w-screen items-center justify-center">
-      {deeplink}
+    <main className="flex h-screen w-screen flex-col items-center justify-center">
+      <div>{deeplink}</div>
+      <div>{storeUrl}</div>
+      <div>{url}</div>
     </main>
   );
 }
