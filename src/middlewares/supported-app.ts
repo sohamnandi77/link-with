@@ -25,7 +25,7 @@ export default async function SupportedAppMiddleware(
     const appUrl = convertToIosAppUrl(url);
     if (appUrl?.ios) {
       return addCookiesForRedirectResponse(
-        NextResponse.rewrite("/default/", {
+        NextResponse.rewrite(new URL("/default", req.url), {
           ...getHeaders(shouldIndex),
         }),
         {
@@ -41,7 +41,7 @@ export default async function SupportedAppMiddleware(
     const appUrl = convertToAndroidAppUrl(url);
     if (appUrl?.android) {
       return addCookiesForRedirectResponse(
-        NextResponse.rewrite("/default/", {
+        NextResponse.rewrite(new URL("/default", req.url), {
           ...getHeaders(shouldIndex),
         }),
         {

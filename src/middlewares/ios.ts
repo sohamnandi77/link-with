@@ -19,7 +19,7 @@ export default async function IosMiddleware(props: IosMiddlewareProps) {
     // check if it is an app store link -> url of store link
     if (ios.includes(SUPPORTED_DOMAINS.APPLE_APP_STORE)) {
       return addCookiesForRedirectResponse(
-        NextResponse.rewrite("/default/", {
+        NextResponse.rewrite(new URL("/default", req.url), {
           ...getHeaders(shouldIndex),
         }),
         {
@@ -33,7 +33,7 @@ export default async function IosMiddleware(props: IosMiddlewareProps) {
     // check it is a uri scheme
     if (!ios.includes("https://") || !ios.includes("http://")) {
       return addCookiesForRedirectResponse(
-        NextResponse.rewrite("/default/", {
+        NextResponse.rewrite(new URL("/default", req.url), {
           ...getHeaders(shouldIndex),
         }),
         {

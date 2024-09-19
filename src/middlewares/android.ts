@@ -19,7 +19,7 @@ export default async function AndroidMiddleware(props: AndroidMiddlewareProps) {
     // check if it is an app store link -> url of store link
     if (android.includes(SUPPORTED_DOMAINS.GOOGLE_PLAY_STORE)) {
       return addCookiesForRedirectResponse(
-        NextResponse.rewrite("/default/", {
+        NextResponse.rewrite(new URL("/default", req.url), {
           ...getHeaders(shouldIndex),
         }),
         {
@@ -33,7 +33,7 @@ export default async function AndroidMiddleware(props: AndroidMiddlewareProps) {
     // check it is a intent url
     if (android.includes("intent://")) {
       return addCookiesForRedirectResponse(
-        NextResponse.rewrite("/default/", {
+        NextResponse.rewrite(new URL("/default", req.url), {
           ...getHeaders(shouldIndex),
         }),
         {

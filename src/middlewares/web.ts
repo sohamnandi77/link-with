@@ -26,7 +26,7 @@ export default async function WebMiddleware({
   }
 
   return addCookiesForRedirectResponse(
-    NextResponse.rewrite("/default/", {
+    NextResponse.rewrite(new URL("/default", req.url), {
       ...getHeaders(shouldIndex),
     }),
     {
