@@ -52,11 +52,11 @@ export default function UrlRedirectPage({
   useLayoutEffect(() => {
     // Record Link
     const url = decodeURIComponent(params.url ?? "");
-    const deepLink = decodeURIComponent(deeplink ?? "");
+    const deeplinkUrl = decodeURIComponent(deeplink ?? "");
     const storeUrl = decodeURIComponent(store ?? "");
 
-    if (deepLink) {
-      handleDeeplinkFallback(url, deepLink, storeUrl);
+    if (deeplinkUrl) {
+      handleDeeplinkFallback(url, deeplinkUrl, storeUrl);
     } else if (storeUrl) {
       handleStoreRedirectionFallback(url, storeUrl);
     } else {
@@ -67,6 +67,11 @@ export default function UrlRedirectPage({
   return (
     <main className="flex h-screen w-screen items-center justify-center">
       Redirecting...
+      <div>deepLink: {deeplink}</div>
+      <div>decode deepLink: {decodeURIComponent(deeplink ?? "")}</div>
+      <div>store: {store}</div>
+      <div>decode store: {decodeURIComponent(store ?? "")}</div>
+      <div>url: {params.url}</div>
     </main>
   );
 }
