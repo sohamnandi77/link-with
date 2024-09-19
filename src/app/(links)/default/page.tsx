@@ -2,7 +2,6 @@
 
 import { DeepLinker } from "@/lib/deeplinker";
 import { constructStoreUrl } from "@/lib/functions/construct-store-url";
-import { useLayoutEffect } from "react";
 
 const handleStoreRedirectionFallback = (url: string, storeUrl: string) => {
   try {
@@ -56,15 +55,15 @@ export default function UrlRedirectPage() {
   // const deeplink = searchParams?.get("deeplink") ?? "";
   // const storeUrl = searchParams?.get("store") ?? "";
 
-  useLayoutEffect(() => {
-    if (deeplink) {
-      handleDeeplinkFallback(url, deeplink, storeUrl);
-    } else if (storeUrl) {
-      handleStoreRedirectionFallback(url, storeUrl);
-    } else {
-      window.location.href = url;
-    }
-  }, [deeplink, storeUrl, url]);
+  // useLayoutEffect(() => {
+  //   if (deeplink) {
+  //     handleDeeplinkFallback(url, deeplink, storeUrl);
+  //   } else if (storeUrl) {
+  //     handleStoreRedirectionFallback(url, storeUrl);
+  //   } else {
+  //     window.location.href = url;
+  //   }
+  // }, [deeplink, storeUrl, url]);
 
   return (
     <main className="flex h-screen w-screen flex-col items-center justify-center">
