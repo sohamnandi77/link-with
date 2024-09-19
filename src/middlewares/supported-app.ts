@@ -32,6 +32,8 @@ export default async function SupportedAppMiddleware(
 
   const appUrl = convertToAppUrl(url);
 
+  console.log("Supported App", appUrl);
+
   if (ua === "ios" && appUrl?.ios) {
     return createResponseWithCookie(
       NextResponse.rewrite(
@@ -56,6 +58,7 @@ export default async function SupportedAppMiddleware(
   }
 
   if (ua === "android" && appUrl?.android) {
+    console.log("Supported App Android");
     return createResponseWithCookie(
       NextResponse.rewrite(
         new URL(

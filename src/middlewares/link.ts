@@ -204,6 +204,8 @@ export default async function LinkMiddleware(req: NextRequest) {
     );
   }
 
+  console.log(userAgent(req));
+
   // redirect to iOS link if it is specified and the user is on an iOS device
   if (userAgent(req).os?.name === "iOS") {
     // iosMiddleware
@@ -221,6 +223,7 @@ export default async function LinkMiddleware(req: NextRequest) {
 
   // redirect to Android link if it is specified and the user is on an Android device
   if (android && userAgent(req).os?.name === "Android") {
+    console.log("Android");
     // androidMiddleware
     return AndroidMiddleware({
       url,
@@ -233,6 +236,8 @@ export default async function LinkMiddleware(req: NextRequest) {
       shouldIndex,
     });
   }
+
+  console.log("Web");
 
   // regular redirect
   return WebMiddleware({
