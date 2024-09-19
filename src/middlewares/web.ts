@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createResponseWithCookie } from "./utils/create-response-with-cookie";
-import { getFinalUrl } from "./utils/get-final-url";
+import { getDeeplinkUrl, getFinalUrl } from "./utils/get-final-url";
 import { getHeaders } from "./utils/get-headers";
 
 interface DefaultRedirectMiddlewareProps {
@@ -32,16 +32,17 @@ export default async function WebMiddleware({
     );
   }
 
+  const finalUrl = getDeeplinkUrl({
+    route: "/default",
+    req,
+    url,
+    collectAnalytics,
+  });
+
   return createResponseWithCookie(
-    NextResponse.rewrite(
-      new URL(
-        `/default/${encodeURIComponent(getFinalUrl({ url, req }))}`,
-        req.url,
-      ),
-      {
-        ...getHeaders(shouldIndex),
-      },
-    ),
+    NextResponse.rewrite(finalUrl, {
+      ...getHeaders(shouldIndex),
+    }),
     { clickId, path: `/${originalKey}` },
   );
 }

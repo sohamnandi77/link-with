@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { SUPPORTED_DOMAINS } from "./deeplink/apps-config";
 import SupportedAppMiddleware from "./supported-app";
 import { createResponseWithCookie } from "./utils/create-response-with-cookie";
-import { getFinalUrl } from "./utils/get-final-url";
+import { getDeeplinkUrl } from "./utils/get-final-url";
 import { getHeaders } from "./utils/get-headers";
 
 interface AndroidMiddlewareProps {
@@ -30,31 +30,33 @@ export default async function AndroidMiddleware(props: AndroidMiddlewareProps) {
   if (android) {
     // check if it is an app store link -> url of store link
     if (android.includes(SUPPORTED_DOMAINS.GOOGLE_PLAY_STORE)) {
+      const finalUrl = getDeeplinkUrl({
+        route: "/default",
+        req,
+        url,
+        storeUrl: android ?? "",
+        collectAnalytics,
+      });
       return createResponseWithCookie(
-        NextResponse.rewrite(
-          new URL(
-            `/default/${encodeURIComponent(getFinalUrl({ url, req, storeUrl: android, collectAnalytics }))}`,
-            req.url,
-          ),
-          {
-            ...getHeaders(shouldIndex),
-          },
-        ),
+        NextResponse.rewrite(finalUrl, {
+          ...getHeaders(shouldIndex),
+        }),
         { clickId, path: `/${originalKey}` },
       );
     }
     // check it is a intent url
     if (android.includes("intent://")) {
+      const finalUrl = getDeeplinkUrl({
+        route: "/default",
+        req,
+        url,
+        deeplink: android ?? "",
+        collectAnalytics,
+      });
       return createResponseWithCookie(
-        NextResponse.rewrite(
-          new URL(
-            `/default/${encodeURIComponent(getFinalUrl({ url, req, deeplink: android, collectAnalytics }))}`,
-            req.url,
-          ),
-          {
-            ...getHeaders(shouldIndex),
-          },
-        ),
+        NextResponse.rewrite(finalUrl, {
+          ...getHeaders(shouldIndex),
+        }),
         { clickId, path: `/${originalKey}` },
       );
     }
