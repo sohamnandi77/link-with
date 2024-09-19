@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { SUPPORTED_DOMAINS } from "./deeplink/apps-config";
 import SupportedAppMiddleware from "./supported-app";
 import { createResponseWithCookie } from "./utils/create-response-with-cookie";
-import { getFinalUrl } from "./utils/get-final-url";
+import { getDeeplinkUrl } from "./utils/get-final-url";
 import { getHeaders } from "./utils/get-headers";
 
 interface IosMiddlewareProps {
@@ -30,31 +30,33 @@ export default async function IosMiddleware(props: IosMiddlewareProps) {
   if (ios) {
     // check if it is an app store link -> url of store link
     if (ios.includes(SUPPORTED_DOMAINS.APPLE_APP_STORE)) {
+      const finalUrl = getDeeplinkUrl({
+        route: "/default",
+        req,
+        url,
+        storeUrl: ios ?? "",
+        collectAnalytics,
+      });
       return createResponseWithCookie(
-        NextResponse.rewrite(
-          new URL(
-            `/default/${encodeURIComponent(getFinalUrl({ url, req, storeUrl: ios, collectAnalytics }))}`,
-            req.url,
-          ),
-          {
-            ...getHeaders(shouldIndex),
-          },
-        ),
+        NextResponse.rewrite(finalUrl, {
+          ...getHeaders(shouldIndex),
+        }),
         { clickId, path: `/${originalKey}` },
       );
     }
     // check it is a uri scheme
     if (!ios.includes("https://") || !ios.includes("http://")) {
+      const finalUrl = getDeeplinkUrl({
+        route: "/default",
+        req,
+        url,
+        deeplink: ios ?? "",
+        collectAnalytics,
+      });
       return createResponseWithCookie(
-        NextResponse.rewrite(
-          new URL(
-            `/default/${encodeURIComponent(getFinalUrl({ url, req, deeplink: ios, collectAnalytics }))}`,
-            req.url,
-          ),
-          {
-            ...getHeaders(shouldIndex),
-          },
-        ),
+        NextResponse.rewrite(finalUrl, {
+          ...getHeaders(shouldIndex),
+        }),
         { clickId, path: `/${originalKey}` },
       );
     }
