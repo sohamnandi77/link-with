@@ -31,7 +31,6 @@ export default async function SupportedAppMiddleware(
         {
           url,
           deeplink: appUrl.ios ?? "",
-          storeUrl: appUrl?.appStore ?? "",
           collectAnalytics,
           path: "/",
         },
@@ -47,7 +46,6 @@ export default async function SupportedAppMiddleware(
         {
           url,
           deeplink: appUrl.android ?? "",
-          storeUrl: appUrl?.playStore ?? "",
           collectAnalytics,
           path: "/",
         },
