@@ -14,7 +14,7 @@ export async function createLink(link: ProcessedLinkProps) {
     expiredLinkByDate,
     ogTitle,
     ogDescription,
-    geoTargeting,
+    geo,
   } = link;
 
   const combinedTagIds = combineTagIds(link);
@@ -36,7 +36,7 @@ export async function createLink(link: ProcessedLinkProps) {
       utmTerm,
       utmContent,
       expiredLinkByDate: expiredLinkByDate ? new Date(expiredLinkByDate) : null,
-      geoTargeting: geoTargeting ?? Prisma.JsonNull,
+      geo: geo ?? Prisma.JsonNull,
       userId: userId!,
       createdBy: userId!,
       updatedBy: userId!,

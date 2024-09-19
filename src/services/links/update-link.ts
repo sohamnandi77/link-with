@@ -30,7 +30,7 @@ export async function updateLink({
     ogTitle,
     ogDescription,
     ogImage,
-    geoTargeting,
+    geo,
   } = updatedLink;
   const { utmSource, utmMedium, utmCampaign, utmTerm, utmContent } =
     getParamsFromURL(originalLink);
@@ -56,7 +56,7 @@ export async function updateLink({
       utmTerm: utmTerm ?? null,
       utmContent: utmContent ?? null,
       expiredLinkByDate: expiredLinkByDate ? new Date(expiredLinkByDate) : null,
-      geoTargeting: geoTargeting ?? Prisma.JsonNull,
+      geo: geo ?? Prisma.JsonNull,
       updatedBy: userId,
 
       // Associate tags by tagNames

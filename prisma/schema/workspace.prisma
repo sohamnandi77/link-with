@@ -5,7 +5,7 @@ model Workspace {
     logo                  String?
     plan                  Plan    @default(FREE)
     inviteCode            String? @unique
-    showAnalytics         Boolean @default(false)
+    collectAnalytics      Boolean @default(false)
     timezone              String  @default("UTC")
     defaultExpirationLink String?
 

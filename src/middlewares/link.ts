@@ -48,9 +48,9 @@ export default async function LinkMiddleware(req: NextRequest) {
     cloaked,
     iframeable,
     expiredLinkByDate,
-    iosTargeting,
-    androidTargeting,
-    geoTargeting,
+    ios,
+    android,
+    geo,
     expiredLink,
     banned,
     collectAnalytics,
@@ -188,11 +188,11 @@ export default async function LinkMiddleware(req: NextRequest) {
   }
 
   // redirect to geo-specific link if it is specified and the user is in the specified country
-  if (geoTargeting && country) {
+  if (geo && country) {
     return createResponseWithCookie(
       NextResponse.redirect(
         getFinalUrl({
-          url: geoTargeting[country as keyof typeof geoTargeting],
+          url: geo[country as keyof typeof geo],
           req,
         }),
         {
@@ -212,7 +212,7 @@ export default async function LinkMiddleware(req: NextRequest) {
       req,
       clickId,
       collectAnalytics,
-      ios: iosTargeting,
+      ios,
       key,
       originalKey,
       shouldIndex,
@@ -220,14 +220,14 @@ export default async function LinkMiddleware(req: NextRequest) {
   }
 
   // redirect to Android link if it is specified and the user is on an Android device
-  if (androidTargeting && userAgent(req).os?.name === "Android") {
+  if (android && userAgent(req).os?.name === "Android") {
     // androidMiddleware
     return AndroidMiddleware({
       url,
       req,
       clickId,
       collectAnalytics,
-      android: androidTargeting,
+      android,
       key,
       originalKey,
       shouldIndex,

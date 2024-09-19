@@ -29,11 +29,9 @@ model Link {
     utmContent  String? // UTM content for the link
 
     // Custom device targeting
-    iosTargeting     String? // custom link for iOS devices
-    iosDeepLink      Boolean? // whether to use deep linking for iOS devices
-    androidTargeting String? // custom link for Android devices
-    androidDeepLink  Boolean? // whether to use deep linking for Android devices
-    geoTargeting     Json? // custom link for specific countries
+    ios     String? // custom link for iOS devices
+    android String? // custom link for Android devices
+    geo     Json? // custom link for specific countries
 
     // Tags
     tags LinkTag[]

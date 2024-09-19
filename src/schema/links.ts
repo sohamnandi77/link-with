@@ -98,7 +98,7 @@ export const createLinkBodySchema = z.object({
     .optional()
     .default(false)
     .describe("Whether the short link is archived."),
-  showAnalytics: z
+  collectAnalytics: z
     .boolean()
     .optional()
     .default(false)
@@ -173,17 +173,17 @@ export const createLinkBodySchema = z.object({
     .optional()
     .default(false)
     .describe("Whether the short link uses link cloaking."),
-  iosTargeting: parseUrlSchema
+  ios: parseUrlSchema
     .nullish()
     .describe(
       "The iOS destination URL for the short link for iOS device targeting.",
     ),
-  androidTargeting: parseUrlSchema
+  android: parseUrlSchema
     .nullish()
     .describe(
       "The Android destination URL for the short link for Android device targeting.",
     ),
-  geoTargeting: z
+  geo: z
     .record(z.enum(COUNTRY_CODES), parseUrlSchema)
     .nullish()
     .describe(
@@ -307,13 +307,13 @@ export const LinkSchema = z.object({
     .boolean()
     .default(false)
     .describe("Whether to allow search engines to index the short link."),
-  iosTargeting: z
+  ios: z
     .string()
     .nullable()
     .describe(
       "The iOS destination URL for the short link for iOS device targeting.",
     ),
-  androidTargeting: z
+  android: z
     .string()
     .nullable()
     .describe(
@@ -325,7 +325,7 @@ export const LinkSchema = z.object({
     .describe(
       "Geo targeting information for the short link in JSON format `{[COUNTRY]: https://example.com }`. Learn more: https://d.to/geo",
     ),
-  showAnalytics: z
+  collectAnalytics: z
     .boolean()
     .default(false)
     .describe("Whether to show analytics for the short link."),
