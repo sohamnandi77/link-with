@@ -1,4 +1,5 @@
 import { TOKEN_PREFIX } from "@/constants/config";
+import { getCurrentPlan } from "@/constants/pricing";
 import { hashToken } from "@/lib/auth/hash-token";
 import { withWorkspace } from "@/lib/auth/with-workspace";
 import { validateScopesForRole } from "@/lib/rbac/permissions";
@@ -105,6 +106,7 @@ export const POST = withWorkspace(
         hashedKey,
         userId: session?.user.id ?? "",
         workspaceId: workspace?.id ?? "",
+        rateLimit: getCurrentPlan(workspace.plan).limits.api,
         scopes:
           scopes && scopes.length > 0 ? [...new Set(scopes)].join(" ") : null,
       },

@@ -3,6 +3,7 @@ import { db } from "@/server/db";
 import { ApiError, handleAndReturnErrorResponse } from "@/services/errors";
 import { type AxiomRequest, withAxiom } from "next-axiom";
 import { getSearchParams } from "../functions/urls";
+import { ratelimit } from "../upstash";
 import { hashToken } from "./hash-token";
 import { getSession, type Session } from "./utils";
 
@@ -26,6 +27,7 @@ export const withSession = (handler: WithSessionHandler) =>
     ) => {
       try {
         let session: Session | null;
+        let headers = {};
         let token;
 
         const authorizationHeader = req.headers.get("Authorization");
@@ -39,6 +41,25 @@ export const withSession = (handler: WithSessionHandler) =>
           }
           const apiKey = authorizationHeader.replace("Bearer ", "");
           const isRestrictedToken = apiKey?.startsWith(TOKEN_PREFIX);
+
+          const { success, limit, reset, remaining } = await ratelimit(
+            600,
+            "1 m",
+          ).limit(apiKey);
+
+          headers = {
+            "Retry-After": reset.toString(),
+            "X-RateLimit-Limit": limit.toString(),
+            "X-RateLimit-Remaining": remaining.toString(),
+            "X-RateLimit-Reset": reset.toString(),
+          };
+
+          if (!success) {
+            return new Response("Too many requests.", {
+              status: 429,
+              headers,
+            });
+          }
 
           const hashedKey = await hashToken(apiKey);
           if (isRestrictedToken) {

@@ -184,7 +184,6 @@ export default async function LinkMiddleware(req: NextRequest) {
 
   // redirect to Android link if it is specified and the user is on an Android device
   if (userAgent(req).os?.name === "Android") {
-    console.log("Android");
     // androidMiddleware
     return AndroidMiddleware({
       url,

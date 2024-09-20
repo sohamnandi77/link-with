@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { addCookiesForRedirectResponse } from "./utils/create-response-with-cookie";
+import { createResponseWithCookie } from "./utils/create-response-with-cookie";
 import { getFinalUrl } from "./utils/get-final-url";
 import { getHeaders } from "./utils/get-headers";
 
@@ -25,7 +25,7 @@ export default async function WebMiddleware({
     });
   }
 
-  return addCookiesForRedirectResponse(
+  return createResponseWithCookie(
     NextResponse.rewrite(new URL("/default", req.url), {
       ...getHeaders(shouldIndex),
     }),

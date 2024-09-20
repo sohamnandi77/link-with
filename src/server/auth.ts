@@ -19,6 +19,7 @@ import {
 import { validatePassword } from "@/lib/auth/password";
 import { generateWorkspaceSlug } from "@/lib/functions/generate-workspace-slug";
 import { type UserProps } from "@/lib/types";
+import { ratelimit } from "@/lib/upstash";
 import { nanoid } from "@/lib/vendors/nanoid";
 import { LoginSchema } from "@/schema/auth";
 import { getUserByEmail } from "@/services/users/get-user-by-email";
@@ -160,6 +161,14 @@ export const authOptions: NextAuthOptions = {
 
         if (validatedFields.success) {
           const { email, password } = validatedFields.data;
+
+          const { success } = await ratelimit(5, "1 m").limit(
+            `login-attempts:${email}`,
+          );
+
+          if (!success) {
+            throw new Error("too-many-login-attempts");
+          }
 
           const user = await getUserByEmail(email);
           if (!user?.password) throw new Error("invalid-credentials");

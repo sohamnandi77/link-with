@@ -1,5 +1,6 @@
 import { withWorkspace } from "@/lib/auth/with-workspace";
 import { getSearchParamsWithArray } from "@/lib/functions/urls";
+import { ratelimit } from "@/lib/upstash";
 import {
   createLinkBodySchema,
   getLinksQuerySchemaExtended,
@@ -63,6 +64,18 @@ export const POST = withWorkspace(
   async ({ req, headers, session, workspace }) => {
     if (workspace) {
       throwIfLinksUsageExceeded(workspace);
+    }
+    if (!session) {
+      const ip = req.headers.get("x-forwarded-for") ?? "";
+      const { success } = await ratelimit(10, "1 d").limit(ip);
+
+      if (!success) {
+        throw new ApiError({
+          code: "RATE_LIMIT_EXCEEDED",
+          message:
+            "Rate limited – you can only create up to 10 links per day without an account.",
+        });
+      }
     }
 
     const body = createLinkBodySchema.parse(await parseRequestBody(req));

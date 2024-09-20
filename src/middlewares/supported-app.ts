@@ -3,7 +3,7 @@ import {
   convertToAndroidAppUrl,
   convertToIosAppUrl,
 } from "./deeplink/convert-to-app-url";
-import { addCookiesForRedirectResponse } from "./utils/create-response-with-cookie";
+import { createResponseWithCookie } from "./utils/create-response-with-cookie";
 import { getHeaders } from "./utils/get-headers";
 import WebMiddleware from "./web";
 
@@ -24,7 +24,7 @@ export default async function SupportedAppMiddleware(
   if (ua === "ios") {
     const appUrl = convertToIosAppUrl(url);
     if (appUrl?.ios) {
-      return addCookiesForRedirectResponse(
+      return createResponseWithCookie(
         NextResponse.rewrite(new URL("/default", req.url), {
           ...getHeaders(shouldIndex),
         }),
@@ -39,7 +39,7 @@ export default async function SupportedAppMiddleware(
   } else if (ua === "android") {
     const appUrl = convertToAndroidAppUrl(url);
     if (appUrl?.android) {
-      return addCookiesForRedirectResponse(
+      return createResponseWithCookie(
         NextResponse.rewrite(new URL("/default", req.url), {
           ...getHeaders(shouldIndex),
         }),

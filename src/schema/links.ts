@@ -9,7 +9,7 @@ import {
   parseUrlSchemaAllowEmpty,
 } from "./utils";
 
-export const UrlQuerySchema = z.object({
+export const getUrlQuerySchema = z.object({
   url: parseUrlSchema,
 });
 
@@ -399,3 +399,21 @@ export const getLinksQuerySchemaExtended = getLinksQuerySchema.merge(
     includeUser: booleanQuerySchema.default("false"),
   }),
 );
+
+export const domainKeySchema = z.object({
+  domain: z
+    .string()
+    .min(1, "Domain is required.")
+    .describe(
+      "The domain of the link to retrieve. E.g. for `d.to/github`, the domain is `d.to`.",
+    )
+    .refine((v) => VALID_DOMAIN_REGEX.test(v), {
+      message: "Invalid domain format",
+    }),
+  key: z
+    .string()
+    .min(1, "Key is required.")
+    .describe(
+      "The key of the link to retrieve. E.g. for `d.to/github`, the key is `github`.",
+    ),
+});

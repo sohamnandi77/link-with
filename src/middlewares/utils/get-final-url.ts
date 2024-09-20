@@ -39,34 +39,6 @@ export const getFinalUrl = (props: GetFinalUrlProps) => {
   return urlObj.toString();
 };
 
-interface GetDeeplinkUrlProps {
-  req: NextRequest;
-  route: string;
-  storeUrl?: string;
-  deeplink?: string;
-  collectAnalytics?: boolean;
-  url?: string;
-}
-
-export const getDeeplinkUrl = (props: GetDeeplinkUrlProps) => {
-  const { route, req, storeUrl, deeplink, collectAnalytics, url } = props;
-  const urlObj = new URL(route, req.url);
-  if (url) {
-    urlObj.searchParams.set("url", url);
-  }
-  if (deeplink) {
-    urlObj.searchParams.set("deeplink", deeplink);
-  }
-  if (storeUrl) {
-    urlObj.searchParams.set("store", storeUrl);
-  }
-  if (collectAnalytics) {
-    urlObj.searchParams.set("analytics", `${collectAnalytics}`);
-  }
-
-  return urlObj;
-};
-
 // Get final cleaned url for storing in TB
 export const getFinalUrlForRecordClick = ({
   req,

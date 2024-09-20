@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { SUPPORTED_DOMAINS } from "./deeplink/apps-config";
 import SupportedAppMiddleware from "./supported-app";
-import { addCookiesForRedirectResponse } from "./utils/create-response-with-cookie";
+import { createResponseWithCookie } from "./utils/create-response-with-cookie";
 import { getHeaders } from "./utils/get-headers";
 
 interface AndroidMiddlewareProps {
@@ -17,7 +17,7 @@ export default async function AndroidMiddleware(props: AndroidMiddlewareProps) {
   const { req, android, key, shouldIndex, url, collectAnalytics } = props;
   if (android) {
     if (android.includes(SUPPORTED_DOMAINS.GOOGLE_PLAY_STORE)) {
-      return addCookiesForRedirectResponse(
+      return createResponseWithCookie(
         NextResponse.rewrite(new URL("/default", req.url), {
           ...getHeaders(shouldIndex),
         }),
@@ -30,7 +30,7 @@ export default async function AndroidMiddleware(props: AndroidMiddlewareProps) {
       );
     }
     if (android.includes("intent://")) {
-      return addCookiesForRedirectResponse(
+      return createResponseWithCookie(
         NextResponse.rewrite(new URL("/default", req.url), {
           ...getHeaders(shouldIndex),
         }),

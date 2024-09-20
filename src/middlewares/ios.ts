@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { SUPPORTED_DOMAINS } from "./deeplink/apps-config";
 import SupportedAppMiddleware from "./supported-app";
-import { addCookiesForRedirectResponse } from "./utils/create-response-with-cookie";
+import { createResponseWithCookie } from "./utils/create-response-with-cookie";
 import { getHeaders } from "./utils/get-headers";
 
 interface IosMiddlewareProps {
@@ -18,7 +18,7 @@ export default async function IosMiddleware(props: IosMiddlewareProps) {
   if (ios) {
     // check if it is an app store link -> url of store link
     if (ios.includes(SUPPORTED_DOMAINS.APPLE_APP_STORE)) {
-      return addCookiesForRedirectResponse(
+      return createResponseWithCookie(
         NextResponse.rewrite(new URL("/default", req.url), {
           ...getHeaders(shouldIndex),
         }),
@@ -32,7 +32,7 @@ export default async function IosMiddleware(props: IosMiddlewareProps) {
     }
     // check it is a uri scheme
     if (!ios.includes("https://") || !ios.includes("http://")) {
-      return addCookiesForRedirectResponse(
+      return createResponseWithCookie(
         NextResponse.rewrite(new URL("/default", req.url), {
           ...getHeaders(shouldIndex),
         }),

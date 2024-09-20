@@ -8,6 +8,7 @@ import {
   type PermissionAction,
 } from "../rbac/permissions";
 import { type PlanProps, type WorkspaceWithUsers } from "../types";
+import { ratelimit } from "../upstash";
 import { hashToken } from "./hash-token";
 import { throwIfNoAccess } from "./permissions";
 import { getSession, type Session } from "./utils";
@@ -51,7 +52,7 @@ export const withWorkspace = (
       const searchParams = getSearchParams(req.url);
 
       let apiKey: string | undefined = undefined;
-      const headers = {};
+      let headers = {};
 
       try {
         const authorizationHeader = req.headers.get("Authorization");
@@ -148,6 +149,28 @@ export const withWorkspace = (
             throw new ApiError({
               code: "UNAUTHORIZED",
               message: "Unauthorized: Access token expired.",
+            });
+          }
+
+          // Rate limit checks for API keys
+          const rateLimit = token.rateLimit ?? 600;
+
+          const { success, limit, reset, remaining } = await ratelimit(
+            rateLimit,
+            "1 m",
+          ).limit(apiKey);
+
+          headers = {
+            "Retry-After": reset.toString(),
+            "X-RateLimit-Limit": limit.toString(),
+            "X-RateLimit-Remaining": remaining.toString(),
+            "X-RateLimit-Reset": reset.toString(),
+          };
+
+          if (!success) {
+            throw new ApiError({
+              code: "RATE_LIMIT_EXCEEDED",
+              message: "Too many requests.",
             });
           }
 

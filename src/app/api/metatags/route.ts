@@ -1,11 +1,14 @@
-import { UrlQuerySchema } from "@/schema/links";
+import { getUrlQuerySchema } from "@/schema/links";
 import { handleAndReturnErrorResponse } from "@/services/errors";
+import { ratelimitOrThrow } from "@/services/utils/rate-limit-or-throw";
 import { NextResponse, type NextRequest } from "next/server";
 import { getMetaTags } from "./utils";
 
 export async function GET(req: NextRequest) {
   try {
-    const { url } = UrlQuerySchema.parse({
+    await ratelimitOrThrow(req, "metatags");
+
+    const { url } = getUrlQuerySchema.parse({
       url: req.nextUrl.searchParams.get("url"),
     });
 
