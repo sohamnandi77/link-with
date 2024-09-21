@@ -267,7 +267,6 @@ export const authOptions: NextAuthOptions = {
         if (!user) {
           user = await db.user.create({
             data: {
-              id: sub,
               name: [given_name, family_name].join(" "),
               email,
               image,
