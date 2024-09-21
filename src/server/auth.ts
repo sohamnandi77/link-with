@@ -309,5 +309,6 @@ export const authOptions: NextAuthOptions = {
       await createDefaultWorkspace(user?.id, slug, inviteCode);
     },
   },
+  secret: env.NEXTAUTH_SECRET,
   debug: env.NODE_ENV === "development",
 };

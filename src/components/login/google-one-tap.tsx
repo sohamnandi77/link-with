@@ -4,7 +4,6 @@ import useOneTapSignin from "@/hooks/use-one-tap-sign-in";
 
 const GoogleOneTapComponent = () => {
   const {} = useOneTapSignin({
-    redirect: false,
     parentContainerId: "oneTap",
   });
 
