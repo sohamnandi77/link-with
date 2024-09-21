@@ -1,6 +1,6 @@
 import { APP_DOMAIN_ROUTE } from "@/constants/config";
 import { type UserProps } from "@/lib/types";
-import { getDefaultWorkspace } from "@/middlewares/utils/get-default-workspace";
+import { getDefaultWorkspaceEdge } from "@/middlewares/utils/get-default-workspace-edge";
 import { parse } from "@/middlewares/utils/parse";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -10,7 +10,7 @@ export default async function NewLinkMiddleware(
 ) {
   const { fullPath } = parse(req);
 
-  const defaultWorkspace = await getDefaultWorkspace(user);
+  const defaultWorkspace = await getDefaultWorkspaceEdge(user);
 
   const searchParams = new URL(fullPath, APP_DOMAIN_ROUTE).searchParams;
 

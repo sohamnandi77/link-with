@@ -12,8 +12,8 @@ export interface UserProps {
   updatedAt: Date;
   lockedAt?: Date;
   defaultWorkspace?: string;
-  hasPassword: boolean;
-  provider: string | null;
+  hasPassword?: boolean;
+  provider?: string | null;
 }
 
 export const PLANS = ["FREE", "PRO"] as const;

@@ -1,5 +1,5 @@
 import { type UserProps } from "@/lib/types";
-import { getDefaultWorkspace } from "@/middlewares/utils/get-default-workspace";
+import { getDefaultWorkspaceEdge } from "@/middlewares/utils/get-default-workspace-edge";
 import { parse } from "@/middlewares/utils/parse";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -9,7 +9,7 @@ export default async function WorkspacesMiddleware(
 ) {
   const { path, searchParamsString } = parse(req);
 
-  const defaultWorkspace = await getDefaultWorkspace(user);
+  const defaultWorkspace = await getDefaultWorkspaceEdge(user);
 
   if (defaultWorkspace) {
     let redirectPath = path;

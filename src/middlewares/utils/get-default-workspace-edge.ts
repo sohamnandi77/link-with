@@ -1,11 +1,11 @@
 import { type UserProps } from "@/lib/types";
-import { db } from "@/server/db";
+import { edgeDb } from "@/server/edge-db";
 
-export async function getDefaultWorkspace(user: UserProps) {
+export async function getDefaultWorkspaceEdge(user: UserProps) {
   let defaultWorkspace = user?.defaultWorkspace;
 
   if (!defaultWorkspace) {
-    const refreshedUser = await db.user.findUnique({
+    const refreshedUser = await edgeDb.user.findUnique({
       where: {
         id: user.id,
       },

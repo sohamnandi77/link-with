@@ -1,12 +1,13 @@
+import { generateWorkspaceSlug } from "@/lib/functions/generate-workspace-slug";
+import { nanoid } from "@/lib/vendors/nanoid";
 import { db } from "@/server/db";
 
-export async function createDefaultWorkspace(
-  userId?: string,
-  slug?: string,
-  inviteCode?: string,
-) {
+export async function createDefaultWorkspace(userId?: string) {
   try {
-    if (!userId || !slug || !inviteCode) return null;
+    if (!userId) return null;
+
+    const slug = generateWorkspaceSlug(userId);
+    const inviteCode = nanoid(24);
 
     // Create a default workspace for the user
     const workspace = await db.workspace.create({
