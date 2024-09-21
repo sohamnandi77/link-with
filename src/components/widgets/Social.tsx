@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
+import GoogleOneTapComponent from "../login/google-one-tap";
 
 const Social = () => {
   const searchParams = useSearchParams();
@@ -14,7 +15,7 @@ const Social = () => {
         callbackUrl: callbackUrl ?? "/login",
       });
     } catch (error) {
-      console.error("Sign-in error:", error);
+      console.error("Login error:", error);
     }
   };
 
@@ -36,6 +37,7 @@ const Social = () => {
       >
         Login with Github
       </Button>
+      <GoogleOneTapComponent />
     </div>
   );
 };
