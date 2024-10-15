@@ -4,8 +4,6 @@ export const SHORT_DOMAIN = env.NEXT_PUBLIC_APP_SHORT_DOMAIN;
 
 export const HOME_DOMAIN = `https://${env.NEXT_PUBLIC_APP_DOMAIN}`;
 
-export const LOCALHOST_SHORT_DOMAIN = "lk.localhost:3000";
-
 export const APP_HOSTNAMES = new Set([
   `app.${env.NEXT_PUBLIC_APP_DOMAIN}`,
   "localhost:3000",

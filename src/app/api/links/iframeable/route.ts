@@ -4,8 +4,6 @@ import { handleAndReturnErrorResponse } from "@/services/errors";
 import { ratelimitOrThrow } from "@/services/utils/rate-limit-or-throw";
 import { type NextRequest, NextResponse } from "next/server";
 
-export const runtime = "edge";
-
 export async function GET(req: NextRequest) {
   try {
     const { url, domain } = getUrlQuerySchema.and(getDomainQuerySchema).parse({

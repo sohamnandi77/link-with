@@ -1,12 +1,15 @@
-import { parse } from "@/middlewares/utils/parse";
 import { type NextRequest, NextResponse } from "next/server";
+
+import { getUserViaToken } from "@/middlewares/utils/get-user-via-token";
+import { parse } from "@/middlewares/utils/parse";
 import NewLinkMiddleware from "./new-link";
-import { getUserViaToken } from "./utils/get-user-via-token";
 import WorkspacesMiddleware from "./workspace";
 
 export default async function AppMiddleware(req: NextRequest) {
   const { path, fullPath } = parse(req);
   const user = await getUserViaToken(req);
+
+  console.log("user", user);
 
   // if there's no user and the path isn't /login or /register, redirect to /login
   if (

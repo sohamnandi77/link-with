@@ -25,7 +25,7 @@ import { getUserByAccount } from "@/services/users/get-user-by-account";
 import { getUserByEmail } from "@/services/users/get-user-by-email";
 import { getUserById } from "@/services/users/get-user-by-id";
 import { linkAccount } from "@/services/users/link-account";
-import { createDefaultWorkspace } from "@/services/workspaces/create-default-workspsce";
+import { createDefaultWorkspace } from "@/services/workspaces/create-default-workspace";
 import { OAuth2Client } from "google-auth-library";
 import { type JWT } from "next-auth/jwt";
 import { db } from "./db";

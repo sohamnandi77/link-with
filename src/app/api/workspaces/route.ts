@@ -4,30 +4,13 @@ import { createWorkspaceSchema, WorkspaceSchema } from "@/schema/workspaces";
 import { db } from "@/server/db";
 import { ApiError } from "@/services/errors";
 import { checkIfUserExists } from "@/services/users/check-If-user-exists";
+import { getAllWorkspaces } from "@/services/workspaces/get-all-workspaces";
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 
 // GET /api/workspaces - get all projects for the current user
 export const GET = withSession(async ({ session }) => {
-  const workspaces = await db.workspace.findMany({
-    where: {
-      users: {
-        some: {
-          userId: session.user.id,
-        },
-      },
-    },
-    include: {
-      users: {
-        where: {
-          userId: session.user.id,
-        },
-        select: {
-          role: true,
-        },
-      },
-    },
-  });
+  const workspaces = await getAllWorkspaces(session.user.id);
   return NextResponse.json(
     workspaces.map((workspace) =>
       WorkspaceSchema.parse({ ...workspace, id: `ws_${workspace.id}` }),

@@ -50,7 +50,7 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
     return ApiMiddleware(req);
   }
 
-  // default redirects for dub.sh
+  // default redirects for linkwith
   if (
     domain === env.NEXT_PUBLIC_APP_DOMAIN &&
     DEFAULT_REDIRECTS[key as keyof typeof DEFAULT_REDIRECTS]

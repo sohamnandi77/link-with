@@ -1,10 +1,10 @@
 enum UserRole {
-    ADMIN
-    MEMBER
-    GUEST
+  ADMIN
+  MEMBER
+  GUEST
 }
 
 enum Plan {
-    FREE
-    PRO
+  FREE
+  PRO
 }

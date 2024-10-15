@@ -6,8 +6,6 @@ import { ratelimitOrThrow } from "@/services/utils/rate-limit-or-throw";
 import { ImageResponse } from "next/og";
 import { type NextRequest } from "next/server";
 
-export const runtime = "edge";
-
 export async function GET(req: NextRequest) {
   try {
     await ratelimitOrThrow(req, "qr");

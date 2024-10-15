@@ -27,6 +27,22 @@ const config = {
       },
     ];
   },
+  images: {
+    remotePatterns: [
+      {
+        hostname: "placehold.co",
+      },
+      {
+        hostname: "www.google.com",
+      },
+      {
+        hostname: "lh3.googleusercontent.com",
+      },
+      {
+        hostname: "avatars.githubusercontent.com",
+      },
+    ],
+  },
 };
 
 export default config;

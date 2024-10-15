@@ -14,10 +14,10 @@ export default async function NewLinkMiddleware(
 
   const searchParams = new URL(fullPath, APP_DOMAIN_ROUTE).searchParams;
 
-  if (defaultWorkspace) {
+  if (defaultWorkspace?.slug) {
     return NextResponse.redirect(
       new URL(
-        `/${defaultWorkspace}?newLink=${searchParams.get("link") ?? true}${searchParams.has("domain") ? `&newLinkDomain=${searchParams.get("domain")}` : ""}`,
+        `/${defaultWorkspace?.slug}?newLink=${searchParams.get("link") ?? true}${searchParams.has("domain") ? `&newLinkDomain=${searchParams.get("domain")}` : ""}`,
         req.url,
       ),
     );

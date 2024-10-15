@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { z, ZodError } from "zod";
 import { generateErrorMessage } from "zod-error";
 
-import { capitalize } from "@/lib/functions/capitalize";
+import { capitalizeWords } from "@/lib/functions/capitalize";
 
 export const ERROR_CODE = z.enum([
   "BAD_REQUEST",
@@ -166,5 +166,5 @@ export const exceededLimitError = ({
     type === "links" || type === "AI" ? "monthly" : ""
   } limit of ${limit} ${
     limit === 1 ? type.slice(0, -1) : type
-  } on the ${capitalize(plan)} plan. Please upgrade to add more ${type}.`;
+  } on the ${capitalizeWords(plan)} plan. Please upgrade to add more ${type}.`;
 };

@@ -2,6 +2,11 @@ import { type createLinkBodySchema } from "@/schema/links";
 import { type Link, type Workspace } from "@prisma/client";
 import { type z } from "zod";
 
+export type DefaultWorkspaceProps = Pick<
+  Workspace,
+  "id" | "slug" | "logo" | "name" | "plan"
+>;
+
 export interface UserProps {
   id: string;
   name: string;
