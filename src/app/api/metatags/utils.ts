@@ -50,9 +50,9 @@ export const getMetaTags = async (url: string) => {
   const html = await getHtml(url);
   if (!html) {
     return {
-      title: url,
-      description: "No description",
-      image: null,
+      ogTitle: url,
+      ogDescription: "No description",
+      ogImage: null,
     };
   }
   const { metaTags, title: titleTag, linkTags } = getHeadChildNodes(html);
@@ -60,14 +60,12 @@ export const getMetaTags = async (url: string) => {
   const object: Record<string, string | null> = {};
 
   metaTags.forEach(({ property, content }) => {
-    // !object[property] → (meaning we're taking the first instance of a metatag and ignoring the rest)
     if (property && !object[property]) {
       object[property] = content ? he.decode(content) : null;
     }
   });
 
   linkTags.forEach(({ rel, href }) => {
-    // !object[rel] → (ditto the above)
     if (rel && !object[rel]) {
       object[rel] = href ?? null;
     }
@@ -88,8 +86,8 @@ export const getMetaTags = async (url: string) => {
     object["shortcut icon"];
 
   return {
-    title: title ?? url,
-    description: description ?? "No description",
-    image: image ? getRelativeUrl(url, image) : null,
+    ogTitle: title ?? url,
+    ogDescription: description ?? "No description",
+    ogImage: image ? getRelativeUrl(url, image) : null,
   };
 };

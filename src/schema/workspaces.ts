@@ -58,6 +58,7 @@ export const createWorkspaceSchema = z.object({
         message: "Cannot use reserved slugs",
       },
     ),
+  logo: z.string().optional(),
   domain: z
     .string()
     .refine((v) => VALID_DOMAIN_REGEX.test(v), {
@@ -70,5 +71,6 @@ export const updateWorkspaceSchema = createWorkspaceSchema
   .pick({
     name: true,
     slug: true,
+    logo: true,
   })
   .partial();

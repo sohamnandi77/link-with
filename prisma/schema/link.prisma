@@ -27,6 +27,7 @@ model Link {
   utmCampaign String? // UTM campaign for the link
   utmTerm     String? // UTM term for the link
   utmContent  String? // UTM content for the link
+  utmReferral String? // UTM referral for the link
 
   // Custom device targeting
   ios     String? // custom link for iOS devices

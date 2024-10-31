@@ -49,6 +49,9 @@ export interface WorkspaceProps extends Workspace {
   users: {
     role: RoleProps;
   }[];
+  _count: {
+    users: number;
+  };
 }
 
 export type WorkspaceWithUsers = Omit<WorkspaceProps, "domains">;

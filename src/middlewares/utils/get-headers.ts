@@ -1,4 +1,4 @@
-import { APP_HEADERS } from "@/constants/config";
+import { APP_HEADERS } from "@/constants/client-config";
 
 export const getHeaders = (shouldIndex: boolean) => {
   return {

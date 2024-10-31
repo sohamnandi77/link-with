@@ -1,54 +1,39 @@
-import { Button } from "@/components/ui/button";
-import {
-  ResponsivePopover,
-  ResponsivePopoverContent,
-  ResponsivePopoverTrigger,
-} from "@/components/widgets/responsive-popover";
-import { getSession } from "@/lib/auth/utils";
-import { ChevronDown } from "lucide-react";
-import Link from "next/link";
-import UserAvatar from "./widgets/user-avatar";
+"use client";
 
-export default async function WorkspaceSwitcher() {
-  const session = await getSession();
+import { useParams } from "next/navigation";
+import UserDropdown from "./user-dropdown";
+import WorkspaceDropdown from "./workspace-dropdown";
+
+type WorkspaceSwitcherProps = {
+  user: {
+    email: string;
+    id: string;
+    name: string;
+    image?: string;
+    defaultWorkspace?: string;
+  };
+};
+
+export default function WorkspaceSwitcher(props: WorkspaceSwitcherProps) {
+  const { user } = props;
+  const { slug } = useParams();
+
+  if (slug) {
+    return (
+      <WorkspaceDropdown
+        slug={slug as string}
+        email={user?.email ?? ""}
+        name={user?.name ?? ""}
+        image={user?.image ?? ""}
+      />
+    );
+  }
 
   return (
-    <ResponsivePopover>
-      <ResponsivePopoverTrigger asChild>
-        <div className="flex items-center space-x-3">
-          <UserAvatar
-            src={session?.user?.image ?? ""}
-            name={session?.user?.name ?? ""}
-          />
-          <div className="flex space-x-1">
-            <span>{session?.user?.name}</span>
-            <ChevronDown />
-          </div>
-        </div>
-      </ResponsivePopoverTrigger>
-      <ResponsivePopoverContent
-        popoverProps={{
-          className: "w-80",
-          align: "end",
-          alignOffset: 2,
-        }}
-      >
-        <div className="flex space-x-3">
-          <UserAvatar
-            src={session?.user?.image ?? ""}
-            name={session?.user?.name ?? ""}
-          />
-          <div>
-            <span>{session?.user?.name}</span>{" "}
-          </div>
-        </div>
-        <Link href="/settings">
-          <Button>Workspace Settings</Button>
-        </Link>
-        <Link href="/settings">
-          <Button>Invite members</Button>
-        </Link>
-      </ResponsivePopoverContent>
-    </ResponsivePopover>
+    <UserDropdown
+      email={user?.email ?? ""}
+      name={user?.name ?? ""}
+      image={user?.image ?? ""}
+    />
   );
 }

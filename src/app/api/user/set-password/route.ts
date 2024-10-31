@@ -1,4 +1,4 @@
-import { PASSWORD_RESET_TOKEN_EXPIRY } from "@/constants/config";
+import { PASSWORD_RESET_TOKEN_EXPIRY } from "@/constants/client-config";
 import { env } from "@/env";
 import { withSession } from "@/lib/auth/with-session";
 import { db } from "@/server/db";

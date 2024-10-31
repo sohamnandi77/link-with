@@ -1,4 +1,4 @@
-import { TOKEN_PREFIX } from "@/constants/config";
+import { TOKEN_PREFIX } from "@/constants/client-config";
 import { db } from "@/server/db";
 import { ApiError, handleAndReturnErrorResponse } from "@/services/errors";
 import { type AxiomRequest, withAxiom } from "next-axiom";

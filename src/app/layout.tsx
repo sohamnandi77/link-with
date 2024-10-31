@@ -1,12 +1,8 @@
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { KeyboardShortcutProvider } from "@/hooks/use-keyboard-shortcut";
 import { constructMetadata } from "@/lib/functions/construct-metadata";
-import { cn } from "@/lib/utils";
 import { Montserrat } from "next/font/google";
+import Script from "next/script";
 
 import "@/styles/globals.css";
-import Script from "next/script";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -21,14 +17,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn(montserrat.variable)}>
+    <html lang="en" className={montserrat.variable} suppressHydrationWarning>
       <body>
-        <TooltipProvider>
-          <KeyboardShortcutProvider>
-            <Toaster closeButton className="pointer-events-auto" />
-            {children}
-          </KeyboardShortcutProvider>
-        </TooltipProvider>
+        {children}
         <Script
           src="https://accounts.google.com/gsi/client"
           strategy="afterInteractive"

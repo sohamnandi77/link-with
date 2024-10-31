@@ -1,4 +1,4 @@
-import { TOKEN_PREFIX } from "@/constants/config";
+import { TOKEN_PREFIX } from "@/constants/client-config";
 import { getCurrentPlan } from "@/constants/pricing";
 import { hashToken } from "@/lib/auth/hash-token";
 import { withWorkspace } from "@/lib/auth/with-workspace";

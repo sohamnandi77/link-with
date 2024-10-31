@@ -1,4 +1,4 @@
-import { MAX_LOGIN_ATTEMPTS } from "@/constants/config";
+import { MAX_LOGIN_ATTEMPTS } from "@/constants/client-config";
 import { db } from "@/server/db";
 import { type User } from "@prisma/client";
 

@@ -19,13 +19,11 @@ import {
 import { validatePassword } from "@/lib/auth/password";
 import { type UserProps } from "@/lib/types";
 import { ratelimit } from "@/lib/upstash";
-import { getDefaultWorkspace } from "@/middlewares/utils/get-default-workspace";
 import { LoginSchema } from "@/schema/auth";
 import { getUserByAccount } from "@/services/users/get-user-by-account";
 import { getUserByEmail } from "@/services/users/get-user-by-email";
 import { getUserById } from "@/services/users/get-user-by-id";
 import { linkAccount } from "@/services/users/link-account";
-import { createDefaultWorkspace } from "@/services/workspaces/create-default-workspace";
 import { OAuth2Client } from "google-auth-library";
 import { type JWT } from "next-auth/jwt";
 import { db } from "./db";
@@ -106,8 +104,6 @@ export const authOptions: NextAuthOptions = {
       user: User | AdapterUser | UserProps;
       trigger?: "signIn" | "update" | "signUp";
     }) {
-      if (!token.sub) return token;
-
       if (user) {
         token.user = user;
       }
@@ -262,7 +258,6 @@ export const authOptions: NextAuthOptions = {
         // At this point we have deconstructed the payload and we have all the user's info at our disposal.
         // So first we're going to do a check to see if we already have this user in our DB using the email as identifier.
         let user = await getUserByEmail(email);
-        let defaultWorkspace: string | undefined;
         // If there's no user, we need to create it
         if (!user) {
           user = await db.user.create({
@@ -273,9 +268,6 @@ export const authOptions: NextAuthOptions = {
               emailVerified: email_verified ? new Date() : null,
             },
           });
-          // We also need to create an default workspace for the user
-          const workspace = await createDefaultWorkspace(user?.id);
-          if (workspace) defaultWorkspace = workspace?.slug;
         }
 
         // The user may already exist, but maybe it signed up with a different provider. With the next few lines of code
@@ -298,24 +290,10 @@ export const authOptions: NextAuthOptions = {
           });
         }
 
-        if (!defaultWorkspace && user) {
-          defaultWorkspace = await getDefaultWorkspace(user as UserProps);
-          if (!defaultWorkspace && user) {
-            const workspace = await createDefaultWorkspace(user?.id);
-            if (workspace) defaultWorkspace = workspace?.slug;
-          }
-        }
-
         return user;
       },
     }),
   ],
-  events: {
-    async createUser({ user }) {
-      // create a default workspace for the user
-      await createDefaultWorkspace(user?.id);
-    },
-  },
   secret: env.NEXTAUTH_SECRET,
   debug: env.NODE_ENV === "development",
 };

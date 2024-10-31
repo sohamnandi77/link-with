@@ -29,7 +29,22 @@ export default async function AppMiddleware(req: NextRequest) {
   } else if (user) {
     if (path === "/new") {
       return NewLinkMiddleware(req, user);
-    } else if (
+    }
+    /* Onboarding redirects
+        - User was created less than a day ago
+        - User is not invited to a workspace (redirect straight to the workspace)
+        - The path does not start with /onboarding
+        - The user has not completed the onboarding step
+      */
+    // if (
+    //   new Date(user.createdAt).getTime() > Date.now() - 60 * 60 * 24 * 1000 &&
+    //   // !isWorkspaceInvite &&
+    //   !path.startsWith("/onboarding")
+    // ) {
+    //   return NextResponse.redirect(new URL(`/onboarding/welcome`, req.url));
+    // }
+
+    if (
       ["/", "/login", "/register", "/settings", "/upgrade"].includes(path) ||
       path.startsWith("/settings/")
     ) {

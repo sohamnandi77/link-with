@@ -27,7 +27,12 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
     UPSTASH_REDIS_REST_TOKEN: z.string(),
-    UPSTASH_REDIS_REST_URL: z.string(),
+    UPSTASH_REDIS_REST_URL: z.string().url(),
+
+    STORAGE_ACCESS_KEY_ID: z.string(),
+    STORAGE_SECRET_ACCESS_KEY: z.string(),
+    STORAGE_ENDPOINT: z.string().url(),
+    STORAGE_BASE_URL: z.string().url(),
   },
 
   /**
@@ -40,7 +45,7 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_SHORT_DOMAIN: z.string(),
     NEXT_PUBLIC_APP_NAME: z.string(),
     NEXT_PUBLIC_POSTHOG_KEY: z.string(),
-    NEXT_PUBLIC_POSTHOG_HOST: z.string(),
+    NEXT_PUBLIC_POSTHOG_HOST: z.string().url(),
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string(),
   },
 
@@ -59,6 +64,10 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
     UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+    STORAGE_ACCESS_KEY_ID: process.env.STORAGE_ACCESS_KEY_ID,
+    STORAGE_SECRET_ACCESS_KEY: process.env.STORAGE_SECRET_ACCESS_KEY,
+    STORAGE_ENDPOINT: process.env.STORAGE_ENDPOINT,
+    STORAGE_BASE_URL: process.env.STORAGE_BASE_URL,
 
     NEXT_PUBLIC_APP_DOMAIN: process.env.NEXT_PUBLIC_APP_DOMAIN,
     NEXT_PUBLIC_APP_SHORT_DOMAIN: process.env.NEXT_PUBLIC_APP_SHORT_DOMAIN,

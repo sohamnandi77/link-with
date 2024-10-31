@@ -1,11 +1,7 @@
+import LinkHistoryPage from "@/features/workspace/components/links-history-page";
+
 const Workspace = () => {
-  return (
-    <div>
-      <div>Workspace Landing Page</div>
-      <div>Generate Link Input box</div>
-      <div>Links History</div>
-    </div>
-  );
+  return <LinkHistoryPage />;
 };
 
 export default Workspace;

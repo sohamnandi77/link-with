@@ -1,7 +1,9 @@
 import { type UserProps } from "@/lib/types";
 import { db } from "@/server/db";
 
-export async function getDefaultWorkspace(user: UserProps) {
+export async function getDefaultWorkspace(
+  user: Pick<UserProps, "id" | "defaultWorkspace">,
+) {
   let defaultWorkspace = user?.defaultWorkspace;
 
   if (!defaultWorkspace) {

@@ -1,69 +1,53 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
-import { LogOut, Settings } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
-import { useState } from "react";
-import UserAvatar from "./widgets/user-avatar";
+  ResponsivePopover,
+  ResponsivePopoverContent,
+  ResponsivePopoverTrigger,
+} from "@/components/widgets/responsive-popover";
+import { ChevronDown } from "lucide-react";
+import {
+  UserAvatarWithDetails,
+  UserDropdownContent,
+} from "./user-dropdown-content";
 
-export default function UserDropdown() {
-  const { data: session } = useSession();
-  const [isOpen, setIsOpen] = useState(false);
+type UserDropdownProps = {
+  email?: string;
+  name?: string;
+  image?: string;
+};
+
+export default function UserDropdown(props: UserDropdownProps) {
+  const { email, name, image } = props;
 
   return (
-    <div className="relative inline-block pt-1.5">
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            className="rounded-full"
-            aria-label="Open user menu"
-            onClick={() => setIsOpen(!isOpen)}
+    <ResponsivePopover>
+      <ResponsivePopoverTrigger asChild>
+        <div className="group">
+          <UserAvatarWithDetails
+            image={image ?? ""}
+            name={name ?? ""}
+            subtext={email ?? ""}
           >
-            <UserAvatar
-              src={session?.user?.image ?? ""}
-              name={session?.user?.name ?? ""}
-            />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-64">
-          <div className="flex flex-col space-y-4">
-            <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium">{session?.user?.name}</p>
-              <p className="text-xs text-muted-foreground">
-                {session?.user?.email}
-              </p>
-            </div>
-            <Separator />
-            <Button
-              variant="ghost"
-              className="justify-start"
-              onClick={() => setIsOpen(false)}
-            >
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
-            </Button>
-            <Button
-              variant="ghost"
-              className="justify-start"
-              onClick={async () => {
-                await signOut({
-                  callbackUrl: "/login",
-                });
-              }}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Button>
-          </div>
-        </PopoverContent>
-      </Popover>
-    </div>
+            <ChevronDown className="transition-transform duration-200 group-data-[state=open]:rotate-180" />
+          </UserAvatarWithDetails>
+        </div>
+      </ResponsivePopoverTrigger>
+      <ResponsivePopoverContent
+        popoverProps={{
+          className: "w-80",
+          align: "end",
+          alignOffset: 2,
+        }}
+      >
+        <div className="divide-y border-[#E6E6E6]">
+          <UserDropdownContent
+            image={image ?? ""}
+            name={name ?? ""}
+            subtext={email ?? ""}
+          />
+        </div>
+      </ResponsivePopoverContent>
+    </ResponsivePopover>
   );
 }

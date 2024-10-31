@@ -6,6 +6,13 @@ await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
 const config = {
+  compiler: {
+    ...(process.env.NODE_ENV === "production" && {
+      removeConsole: {
+        exclude: ["error"],
+      },
+    }),
+  },
   async headers() {
     return [
       {
@@ -40,6 +47,9 @@ const config = {
       },
       {
         hostname: "avatars.githubusercontent.com",
+      },
+      {
+        hostname: "pub-582ea3a671a54786b4eed4f09bc36b61.r2.dev",
       },
     ],
   },

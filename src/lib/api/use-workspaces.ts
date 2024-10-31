@@ -1,13 +1,34 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 import { fetcher } from "@/lib/functions/fetcher";
-import { type WorkspaceProps } from "@/lib/types";
+import { type PlanProps } from "@/lib/types";
 
-export const workspaceOptions = queryOptions({
+type WorkspaceWithMembers = {
+  name: string;
+  id: string;
+  slug: string;
+  logo: string | null;
+  plan: PlanProps;
+  _count: {
+    links: number;
+    users: number;
+  };
+  users: {
+    user: {
+      name: string | null;
+      id: string;
+      image: string | null;
+    };
+  }[];
+};
+
+export const workspacesOptions = {
   queryKey: ["workspaces"],
-  queryFn: () => fetcher<WorkspaceProps>(`/api/workspaces`),
-});
+  queryFn: () => fetcher<WorkspaceWithMembers[]>(`/api/workspaces`),
+};
 
-export const useWorkspace = () => {
-  return useQuery(workspaceOptions);
+export const workspaceQueryOptions = queryOptions(workspacesOptions);
+
+export const useWorkspaces = () => {
+  return useSuspenseQuery(workspacesOptions);
 };

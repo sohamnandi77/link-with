@@ -65,14 +65,6 @@ export const getParamsFromURL = (url: string) => {
   }
 };
 
-export const UTMTags = [
-  "utm_source",
-  "utm_medium",
-  "utm_campaign",
-  "utm_term",
-  "utm_content",
-] as const;
-
 export const constructURLFromUTMParams = (
   url: string,
   utmParams: Record<string, string>,
@@ -94,12 +86,16 @@ export const constructURLFromUTMParams = (
 };
 
 export const paramsMetadata = [
-  { display: "Referral (ref)", key: "ref", examples: "twitter, facebook" },
-  { display: "UTM Source", key: "utm_source", examples: "twitter, facebook" },
-  { display: "UTM Medium", key: "utm_medium", examples: "social, email" },
-  { display: "UTM Campaign", key: "utm_campaign", examples: "summer_sale" },
-  { display: "UTM Term", key: "utm_term", examples: "blue_shoes" },
-  { display: "UTM Content", key: "utm_content", examples: "logolink" },
+  { display: "UTM Source", key: "utmSource", examples: "twitter, facebook" },
+  { display: "UTM Medium", key: "utmMedium", examples: "social, email" },
+  { display: "UTM Campaign", key: "utmCampaign", examples: "summer_sale" },
+  { display: "UTM Term", key: "utmTerm", examples: "blue_shoes" },
+  { display: "UTM Content", key: "utmContent", examples: "logolink" },
+  {
+    display: "Referral (ref)",
+    key: "utmReferral",
+    examples: "twitter, facebook",
+  },
 ];
 
 export const getUrlWithoutUTMParams = (url: string) => {
@@ -114,20 +110,4 @@ export const getUrlWithoutUTMParams = (url: string) => {
 
 export const getPrettyUrl = (url: string) => {
   return url.replace(/(^\w+:|^)\/\//, "").replace("www.", "");
-};
-
-export const createHref = (
-  href: string,
-  domain: string,
-  // any params, doesn't have to be all of them
-  utmParams?: Partial<Record<(typeof UTMTags)[number], string>>,
-) => {
-  if (domain === "dub.co") return href;
-  const url = new URL(href.startsWith("/") ? `https://dub.co${href}` : href);
-  if (utmParams) {
-    Object.entries(utmParams).forEach(([key, value]) => {
-      url.searchParams.set(key, value);
-    });
-  }
-  return url.toString();
 };

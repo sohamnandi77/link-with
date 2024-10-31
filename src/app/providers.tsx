@@ -8,6 +8,9 @@ import { type ReactNode } from "react";
 
 // import { PosthogPageview } from "@/components/layout/posthog-pageview";
 // import { env } from "@/env";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { KeyboardShortcutProvider } from "@/hooks/use-keyboard-shortcut";
 import { getQueryClient } from "@/lib/api/query-client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -32,8 +35,13 @@ export default function Providers({ children }: { children: ReactNode }) {
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
         {/* <PosthogPageview /> */}
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          {children}
+        <ThemeProvider attribute="class">
+          <TooltipProvider>
+            <KeyboardShortcutProvider>
+              <Toaster closeButton className="pointer-events-auto" />
+              <>{children}</>
+            </KeyboardShortcutProvider>
+          </TooltipProvider>
         </ThemeProvider>
         <ReactQueryDevtools />
       </QueryClientProvider>

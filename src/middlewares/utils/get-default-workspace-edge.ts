@@ -24,6 +24,7 @@ export async function getDefaultWorkspaceEdge(user: UserProps) {
       },
     });
 
+    // fallback to first workspace if no default workspace is set
     defaultWorkspace =
       refreshedUser?.defaultWorkspace ??
       refreshedUser?.workspaces[0]?.workspace?.slug ??

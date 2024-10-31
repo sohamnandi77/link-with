@@ -1,20 +1,21 @@
-import { FREE_WORKSPACES_LIMIT } from "@/constants/config";
+import { FREE_WORKSPACES_LIMIT } from "@/constants/client-config";
+import { env } from "@/env";
 import { withSession } from "@/lib/auth/with-session";
+import { isStored, storage } from "@/lib/storage";
 import { createWorkspaceSchema, WorkspaceSchema } from "@/schema/workspaces";
 import { db } from "@/server/db";
 import { ApiError } from "@/services/errors";
 import { checkIfUserExists } from "@/services/users/check-If-user-exists";
-import { getAllWorkspaces } from "@/services/workspaces/get-all-workspaces";
+import { getWorkspacesWithMemberDetails } from "@/services/workspaces/get-workspaces-with-members-details";
+import { waitUntil } from "@vercel/functions";
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 
 // GET /api/workspaces - get all projects for the current user
 export const GET = withSession(async ({ session }) => {
-  const workspaces = await getAllWorkspaces(session.user.id);
+  const workspaces = await getWorkspacesWithMemberDetails(session.user.id);
   return NextResponse.json(
-    workspaces.map((workspace) =>
-      WorkspaceSchema.parse({ ...workspace, id: `ws_${workspace.id}` }),
-    ),
+    workspaces.map((workspace) => ({ ...workspace, id: `ws_${workspace.id}` })),
   );
 });
 
@@ -26,10 +27,6 @@ export const POST = withSession(async ({ req, session }) => {
       message: "You must be logged in to create a workspace.",
     });
   }
-
-  const { name, slug } = await createWorkspaceSchema.parseAsync(
-    await req.json(),
-  );
 
   const userExists = await checkIfUserExists(session.user.id);
 
@@ -59,11 +56,16 @@ export const POST = withSession(async ({ req, session }) => {
     });
   }
 
+  const { name, slug, logo } = await createWorkspaceSchema.parseAsync(
+    await req.json(),
+  );
+
   try {
     const workspaceResponse = await db.workspace.create({
       data: {
         name,
         slug,
+        logo: logo && !isStored(logo) ? null : logo,
         users: {
           create: {
             userId: session.user.id,
@@ -98,15 +100,42 @@ export const POST = withSession(async ({ req, session }) => {
       });
     }
 
+    const uploadUrlKey = `logos/${workspaceResponse.id}_${nanoid(7)}`;
+    const uploadedLogoUrl = `${env.STORAGE_BASE_URL}/${uploadUrlKey}`;
+
+    waitUntil(
+      Promise.all([
+        // Upload image to R2 and update the link with the uploaded image URL when
+        // proxy is enabled and image is set and not stored in R2
+        ...(logo && !isStored(logo)
+          ? [
+              // upload image to R2
+              storage.upload(uploadUrlKey, logo),
+              // update the null image we set earlier to the uploaded image URL
+              db.workspace.update({
+                where: {
+                  id: workspaceResponse.id,
+                },
+                data: {
+                  logo: uploadedLogoUrl,
+                },
+              }),
+            ]
+          : []),
+      ]),
+    );
+
     return NextResponse.json(
       WorkspaceSchema.parse({
         ...workspaceResponse,
+        logo:
+          logo && !isStored(logo) ? uploadedLogoUrl : workspaceResponse.logo,
         id: `ws_${workspaceResponse.id}`,
       }),
     );
   } catch (error: unknown) {
     if (error instanceof Error) {
-      if ("code" in error && error.code === "P2002") {
+      if ("code" in error && (error as { code?: unknown }).code === "P2002") {
         throw new ApiError({
           code: "CONFLICT",
           message: "A workspace with this slug already exists.",

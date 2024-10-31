@@ -1,5 +1,7 @@
+import CreateLinkBuilder from "@/features/link-builder/components/create-link-builder";
+
 const AddLinkPage = () => {
-  return <div>Add Link page</div>;
+  return <CreateLinkBuilder />;
 };
 
 export default AddLinkPage;

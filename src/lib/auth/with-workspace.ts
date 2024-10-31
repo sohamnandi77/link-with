@@ -1,4 +1,4 @@
-import { TOKEN_PREFIX } from "@/constants/config";
+import { TOKEN_PREFIX } from "@/constants/client-config";
 import { db } from "@/server/db";
 import { type AxiomRequest, withAxiom } from "next-axiom";
 import { ApiError, handleAndReturnErrorResponse } from "../../services/errors";
@@ -26,8 +26,8 @@ type WithWorkspaceHandler = ({
   params: Record<string, string>;
   searchParams: Record<string, string>;
   headers?: Record<string, string>;
-  session?: Session;
-  workspace?: WorkspaceWithUsers;
+  session: Session;
+  workspace: WorkspaceWithUsers;
   permissions?: PermissionAction[];
 }) => Promise<Response>;
 
@@ -85,11 +85,13 @@ export const withWorkspace = (
         if (!idOrSlug) {
           // for /api/links (POST /api/links) – allow no session (but warn if user provides apiKey)
           if (allowAnonymous && !apiKey) {
+            // @ts-expect-error – allowAnonymous is a special case for /api/links (POST /api/links)
             return await handler({
               req,
               params,
               searchParams,
               headers,
+              permissions,
             });
           } else {
             throw new ApiError({
@@ -216,6 +218,11 @@ export const withWorkspace = (
               },
               select: {
                 role: true,
+              },
+            },
+            _count: {
+              select: {
+                users: true,
               },
             },
           },

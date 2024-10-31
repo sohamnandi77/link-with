@@ -1,5 +1,5 @@
 import { ccTLDs } from "@/constants/cctlds";
-import { DEFAULT_DOMAINS } from "@/constants/config";
+import { DEFAULT_DOMAINS } from "@/constants/client-config";
 import { SECOND_LEVEL_DOMAINS, SPECIAL_APEX_DOMAINS } from "@/constants/domain";
 import slugify from "@sindresorhus/slugify";
 import { isValidUrl } from "./urls";

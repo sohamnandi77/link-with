@@ -2,9 +2,9 @@ import { type MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Link with App",
-    short_name: "Link with",
-    description: "Link with – the open-source link management infrastructure.",
+    name: "Go to App",
+    short_name: "Go To",
+    description: "Go To – the open-source link management infrastructure.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
