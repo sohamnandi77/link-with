@@ -8,7 +8,7 @@ const WorkspaceLogoForm = () => {
 
   return (
     <form
-      onSubmit={async (e) => {
+      onSubmit={async () => {
         setUploading(true);
       }}
     >
@@ -25,6 +25,7 @@ const WorkspaceLogoForm = () => {
           imageSrc={image}
           readFile
           onChange={({ src }) => setImage(src)}
+          loading={uploading}
           content={null}
           maxFileSizeMB={2}
         />
