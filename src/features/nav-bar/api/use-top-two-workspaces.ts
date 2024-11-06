@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { fetcher } from "@/lib/functions/fetcher";
-import { type PlanProps, type WorkspaceWithUsers } from "../types";
+import { type PlanProps, type WorkspaceWithUsers } from "@/lib/types";
 
 type Top2Workspaces = {
   selectedWorkspace: WorkspaceWithUsers;

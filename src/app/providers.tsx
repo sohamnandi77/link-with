@@ -38,8 +38,12 @@ export default function Providers({ children }: { children: ReactNode }) {
         <ThemeProvider attribute="class">
           <TooltipProvider>
             <KeyboardShortcutProvider>
-              <Toaster closeButton className="pointer-events-auto" />
               <>{children}</>
+              <Toaster
+                closeButton
+                className="pointer-events-auto"
+                position="bottom-right"
+              />
             </KeyboardShortcutProvider>
           </TooltipProvider>
         </ThemeProvider>

@@ -1,12 +1,14 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   ResponsivePopover,
   ResponsivePopoverContent,
   ResponsivePopoverTrigger,
 } from "@/components/widgets/responsive-popover";
+import UserAvatar from "@/components/widgets/user-avatar";
+import { useTop2Workspaces } from "@/features/nav-bar/api/use-top-two-workspaces";
 import CreateWorkspaceCard from "@/features/workspaces/components/create-workspace-card";
-import { useTop2Workspaces } from "@/lib/api/use-top-two-workspaces";
 import { capitalize } from "@/lib/functions/capitalize";
 import { pluralize } from "@/lib/functions/plural";
 import {
@@ -19,12 +21,10 @@ import {
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
-import { Button } from "./ui/button";
 import {
   UserAvatarWithDetails,
   UserDropdownContent,
 } from "./user-dropdown-content";
-import UserAvatar from "./widgets/user-avatar";
 
 type WorkspaceDropdownProps = {
   slug: string;

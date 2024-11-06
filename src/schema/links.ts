@@ -410,9 +410,9 @@ export const domainKeySchema = z.object({
     .refine((v) => VALID_DOMAIN_REGEX.test(v), {
       message: "Invalid domain format",
     }),
-  key: z
+  keyword: z
     .string()
-    .min(1, "Key is required.")
+    .min(1, "Keyword is required.")
     .describe(
       "The key of the link to retrieve. E.g. for `d.to/github`, the key is `github`.",
     ),

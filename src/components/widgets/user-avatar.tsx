@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { generateInitials } from "@/lib/functions/generate-initials";
 
 type UserAvatarProps = {
@@ -12,7 +12,7 @@ const UserAvatar = (props: UserAvatarProps) => {
 
   return (
     <Avatar className={className}>
-      <AvatarImage src={src} alt={name} />
+      {/* <AvatarImage src={src} alt={name} /> */}
       <AvatarFallback>{generateInitials(name)}</AvatarFallback>
     </Avatar>
   );

@@ -1,7 +1,7 @@
 import Providers from "@/app/providers";
-import { MainNav } from "@/components/main-nav";
-import { MaxWidthWrapper } from "@/components/max-width-wrapper";
-import WorkspaceSwitcher from "@/components/workspace-switcher";
+import { MaxWidthWrapper } from "@/components/widgets/max-width-wrapper";
+import { MainNav } from "@/features/nav-bar/components/main-nav";
+import WorkspaceSwitcher from "@/features/nav-bar/components/workspace-switcher";
 import { getSession } from "@/lib/auth/utils";
 import { constructMetadata } from "@/lib/functions/construct-metadata";
 import { type ReactNode } from "react";

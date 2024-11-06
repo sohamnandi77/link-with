@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
+import { DisabledTooltipWrapper } from "@/components/widgets/disabled-tooltip-wrapper";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Flag6 } from "@/icons/flag6";
 import { Gift } from "@/icons/gift";
@@ -140,22 +141,5 @@ export function UTMBuilder(props: UTMBuilderProps) {
         },
       )}
     </div>
-  );
-}
-
-function DisabledTooltipWrapper({
-  children,
-  disabledTooltip,
-}: {
-  children: ReactNode;
-  disabledTooltip?: string | ReactNode;
-}) {
-  return disabledTooltip ? (
-    <Tooltip disableHoverableContent>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent>{disabledTooltip}</TooltipContent>
-    </Tooltip>
-  ) : (
-    children
   );
 }

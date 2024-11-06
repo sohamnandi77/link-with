@@ -1,6 +1,6 @@
-import { MaxWidthWrapper } from "@/components/max-width-wrapper";
+import { MaxWidthWrapper } from "@/components/widgets/max-width-wrapper";
+import { workspaceQueryOptions } from "@/features/workspaces/api/use-workspaces";
 import { getQueryClient } from "@/lib/api/query-client";
-import { workspacesOptions } from "@/lib/api/use-workspaces";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import CreateWorkspaceCard from "./create-workspace-card";
@@ -8,7 +8,7 @@ import WorkspacesList from "./workspace-list";
 
 const WorkspacesClient = () => {
   const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(workspacesOptions);
+  void queryClient.prefetchQuery(workspaceQueryOptions);
 
   return (
     <MaxWidthWrapper className="my-10">
@@ -20,15 +20,15 @@ const WorkspacesClient = () => {
           </p>
         </div>
         <div className="my-10 grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-4">
-          <HydrationBoundary state={dehydrate(queryClient)}>
-            <CreateWorkspaceCard>
-              <div className="flex h-[440px] w-[292px] items-center justify-center rounded-xl border border-dashed border-[#E9D5FF] bg-[#FAF5FF]">
-                <div className="flex flex-col items-center justify-center space-y-7">
-                  <Plus className="size-12" />
-                  <span className="font-semibold">Add Workspace</span>
-                </div>
+          <CreateWorkspaceCard>
+            <div className="flex h-[440px] w-[292px] items-center justify-center rounded-xl border border-dashed border-[#E9D5FF] bg-[#FAF5FF]">
+              <div className="flex flex-col items-center justify-center space-y-7">
+                <Plus className="size-12" />
+                <span className="font-semibold">Add Workspace</span>
               </div>
-            </CreateWorkspaceCard>
+            </div>
+          </CreateWorkspaceCard>
+          <HydrationBoundary state={dehydrate(queryClient)}>
             <WorkspacesList />
           </HydrationBoundary>
         </div>

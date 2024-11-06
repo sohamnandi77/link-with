@@ -71,6 +71,19 @@ const DeviceTargeting = () => {
             </FormItem>
           )}
         />
+        {/* <div className="min-w-0 grow">
+          <DisabledTooltipWrapper disabledTooltip={disabledTooltip}>
+            <Input
+              id={`${id}-${key}`}
+              ref={idx === 0 ? inputRef : undefined}
+              placeholder={placeholder}
+              disabled={disabled ?? Boolean(disabledTooltip)}
+              className="size-full rounded-l-none border border-gray-300 placeholder-gray-400 focus:border-gray-500 focus:ring-gray-500 disabled:cursor-not-allowed sm:text-sm"
+              value={values[key] ?? ""}
+              onChange={(e) => onChange(key, e.target.value)}
+            />
+          </DisabledTooltipWrapper>
+        </div> */}
       </div>
       <div className="space-y-3">
         <FormField

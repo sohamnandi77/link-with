@@ -1,5 +1,5 @@
 "use client";
-import { MaxWidthWrapper } from "@/components/max-width-wrapper";
+import { MaxWidthWrapper } from "@/components/widgets/max-width-wrapper";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";

@@ -2,12 +2,12 @@ import { punycode } from "@/lib/vendors/punycode";
 
 export function linkConstructor({
   domain,
-  key,
+  keyword,
   pretty,
   searchParams,
 }: {
   domain?: string;
-  key?: string;
+  keyword?: string;
   pretty?: boolean;
   searchParams?: Record<string, string>;
 }) {
@@ -15,7 +15,7 @@ export function linkConstructor({
     return "";
   }
 
-  let url = `https://${punycode(domain)}${key && key !== "_root" ? `/${punycode(key)}` : ""}`;
+  let url = `https://${punycode(domain)}${keyword && keyword !== "_root" ? `/${punycode(keyword)}` : ""}`;
 
   if (searchParams) {
     const search = new URLSearchParams();

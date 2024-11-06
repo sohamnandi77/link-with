@@ -19,10 +19,10 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@/components/widgets/responsive-dialog";
+import { useAddWorkspace } from "@/features/workspaces/api/use-add-workspace";
 import { createWorkspaceSchema } from "@/schema/workspaces";
 import { zodResolver } from "@hookform/resolvers/zod";
 import slugify from "@sindresorhus/slugify";
-import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
 
@@ -30,26 +30,17 @@ const CreateWorkspaceCard = ({ children }: { children: React.ReactNode }) => {
   const form = useForm<z.infer<typeof createWorkspaceSchema>>({
     resolver: zodResolver(createWorkspaceSchema),
   });
-  const { update } = useSession();
+  const { showModal, toggleModal, mutate, isPending } = useAddWorkspace(
+    form.reset,
+  );
 
   async function onSubmit(values: z.infer<typeof createWorkspaceSchema>) {
-    try {
-      await fetch("/api/workspaces", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-      await update();
-    } catch (error) {
-      console.error(error);
-    }
+    mutate(values);
   }
 
   return (
     <>
-      <ResponsiveDialog>
+      <ResponsiveDialog open={showModal} onOpenChange={toggleModal}>
         <ResponsiveDialogTrigger className="w-full">
           {children}
         </ResponsiveDialogTrigger>
@@ -77,6 +68,7 @@ const CreateWorkspaceCard = ({ children }: { children: React.ReactNode }) => {
                         imageSrc={value}
                         readFile
                         onChange={({ src }) => onChange(src)}
+                        disabled={isPending}
                         content={null}
                         maxFileSizeMB={2}
                         accessibilityLabel="Workspace logo upload"
@@ -104,6 +96,7 @@ const CreateWorkspaceCard = ({ children }: { children: React.ReactNode }) => {
                               field.onChange(e.target.value);
                               form.setValue("slug", slugify(e.target.value));
                             }}
+                            disabled={isPending}
                           />
                         </FormControl>
                         <FormMessage />
@@ -127,6 +120,7 @@ const CreateWorkspaceCard = ({ children }: { children: React.ReactNode }) => {
                           <Input
                             placeholder="Enter your workspace slug"
                             {...field}
+                            disabled={isPending}
                           />
                         </FormControl>
                         <FormMessage />
@@ -136,7 +130,7 @@ const CreateWorkspaceCard = ({ children }: { children: React.ReactNode }) => {
                 </div>
               </ResponsiveDialogBody>
               <ResponsiveDialogFooter className="mt-8">
-                <Button>Create Workspace</Button>
+                <Button disabled={isPending}>Create Workspace</Button>
               </ResponsiveDialogFooter>
             </form>
           </Form>

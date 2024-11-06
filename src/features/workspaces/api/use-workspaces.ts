@@ -22,13 +22,11 @@ type WorkspaceWithMembers = {
   }[];
 };
 
-export const workspacesOptions = {
+export const workspaceQueryOptions = queryOptions({
   queryKey: ["workspaces"],
   queryFn: () => fetcher<WorkspaceWithMembers[]>(`/api/workspaces`),
-};
-
-export const workspaceQueryOptions = queryOptions(workspacesOptions);
+});
 
 export const useWorkspaces = () => {
-  return useSuspenseQuery(workspacesOptions);
+  return useSuspenseQuery(workspaceQueryOptions);
 };

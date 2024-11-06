@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { combineWords } from "@/lib/functions/combine-words";
 import { parseDateTime } from "@/lib/functions/datetime";
 import {
   constructURLFromUTMParams,
@@ -17,6 +18,7 @@ import { checkIfUserExists } from "../users/check-If-user-exists";
 import { combineTagIds } from "../utils/combine-tag-ids";
 import { keyChecks } from "../utils/key-checks";
 import { processKey } from "../utils/process-key";
+import { getRandomKey } from "./get-random-key";
 
 export async function processLink<T extends Record<string, unknown>>({
   payload,
@@ -45,6 +47,19 @@ export async function processLink<T extends Record<string, unknown>>({
   const { tagNames } = payload;
 
   let { originalLink, expiredUrl, keyword, domain } = payload;
+
+  const {
+    proxy,
+    password,
+    cloaked,
+    expiredLinkByClicks,
+    expiredLinkByDate,
+    ios,
+    android,
+    geo,
+    shouldIndex,
+    prefix,
+  } = payload;
 
   let expiresAt: string | Date | null | undefined = payload.expiredLinkByDate;
   const tagIds = combineTagIds(payload);
@@ -78,6 +93,49 @@ export async function processLink<T extends Record<string, unknown>>({
     };
   }
 
+  // free plan restrictions
+  if (!workspace || workspace.plan === "FREE") {
+    if (keyword === "_root" && originalLink) {
+      return {
+        link: payload,
+        error:
+          "You can only set a redirect for a root domain link on a Pro plan and above. Upgrade to Pro to use this feature.",
+        code: "FORBIDDEN",
+      };
+    }
+
+    if (
+      proxy ||
+      password ||
+      cloaked ||
+      expiredLinkByClicks ||
+      expiredLinkByDate ||
+      ios ||
+      android ||
+      geo ||
+      shouldIndex
+    ) {
+      const proFeaturesString = combineWords(
+        [
+          proxy && "custom social media cards",
+          password && "password protection",
+          cloaked && "link cloaking",
+          (expiredLinkByDate ?? expiredLinkByClicks) && "link expiration",
+          ios && "iOS targeting",
+          android && "Android targeting",
+          geo && "geo targeting",
+          shouldIndex && "search engine indexing",
+        ].filter(Boolean) as string[],
+      );
+
+      return {
+        link: payload,
+        error: `You can only use ${proFeaturesString} on a Pro plan and above. Upgrade to Pro to use these features.`,
+        code: "FORBIDDEN",
+      };
+    }
+  }
+
   // if domain is not defined, set it to the workspace's primary domain
   if (!domain) {
     domain = env.NEXT_PUBLIC_APP_SHORT_DOMAIN;
@@ -96,6 +154,13 @@ export async function processLink<T extends Record<string, unknown>>({
         };
       }
     }
+  }
+
+  if (!keyword) {
+    keyword = await getRandomKey({
+      domain,
+      prefix,
+    });
   } else if (!skipKeyChecks) {
     const processedKeyword = processKey({ domain, keyword });
 
@@ -199,7 +264,7 @@ export async function processLink<T extends Record<string, unknown>>({
     link: {
       ...payload,
       domain,
-      keyword: keyword!,
+      keyword: keyword,
       // we're redefining these fields because they're processed in the function
       originalLink,
       expiresAt,

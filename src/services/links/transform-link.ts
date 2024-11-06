@@ -11,12 +11,12 @@ export const transformLink = (link: LinkWithTags) => {
 
   const shortLink = linkConstructor({
     domain: link.domain,
-    key: link.keyword,
+    keyword: link.keyword,
   });
 
   const qrLink = linkConstructor({
     domain: link.domain,
-    key: link.keyword,
+    keyword: link.keyword,
     searchParams: {
       qr: "1",
     },

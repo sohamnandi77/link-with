@@ -1,6 +1,6 @@
 "use client";
 
-import { useWorkspaces } from "@/lib/api/use-workspaces";
+import { useWorkspaces } from "@/features/workspaces/api/use-workspaces";
 import { useSession } from "next-auth/react";
 import WorkspaceCard from "./workspace-card";
 

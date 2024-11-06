@@ -1,5 +1,5 @@
 import { truncate } from "@/lib/functions/truncate";
-import { getUrlWithoutUTMParams } from "@/lib/functions/urls";
+import { getUrlFromString, getUrlWithoutUTMParams } from "@/lib/functions/urls";
 import { type createLinkBodySchema } from "@/schema/links";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -40,9 +40,11 @@ const useMetatags = () => {
 
       try {
         // if url is valid, continue to generate metatags, else return null
-        new URL(debouncedUrl);
+
+        const validUrl = getUrlFromString(debouncedUrl);
+
         setGeneratingMetatags(true);
-        fetch(`/api/metatags?url=${debouncedUrl}`)
+        fetch(`/api/metatags?url=${validUrl}`)
           .then(async (res) => {
             if (res.status === 200) {
               const results = (await res.json()) as {

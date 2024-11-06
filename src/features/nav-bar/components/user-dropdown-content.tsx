@@ -1,6 +1,6 @@
+import { Button } from "@/components/ui/button";
+import UserAvatar from "@/components/widgets/user-avatar";
 import { LogOut, Settings } from "lucide-react";
-import { Button } from "./ui/button";
-import UserAvatar from "./widgets/user-avatar";
 
 interface UserDropdownContentProps {
   image?: string;

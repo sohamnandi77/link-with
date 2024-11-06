@@ -3,15 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/widgets/file-upload";
 import { NucleoPhoto } from "@/icons/photo";
-import useMetatags from "../hooks/use-metatags";
+import useMetatags from "../api/use-metatags";
 
-const LinkPreview = () => {
+type LinkPreviewProps = {
+  disabled?: boolean;
+};
+
+const LinkPreview = (props: LinkPreviewProps) => {
+  const { disabled } = props;
   const { generatingMetatags, ogDescription, ogImage, ogTitle } = useMetatags();
-  //  <img
-  //    src={ogImage}
-  //    alt={ogTitle ?? ""}
-  //    className="aspect-square w-full transform object-cover transition-transform group-hover:scale-105"
-  //  />;
   return (
     <div className="rounded-xl border border-[#E6E6E6] bg-white p-5">
       <div>Link Preview</div>
@@ -20,6 +20,7 @@ const LinkPreview = () => {
           <div className="group relative overflow-hidden rounded-md border border-gray-300">
             {ogImage ? (
               <FileUpload
+                className="group-hover:scale-105"
                 accept="images"
                 variant="plain"
                 imageSrc={ogImage}
@@ -51,7 +52,7 @@ const LinkPreview = () => {
           )}
         </div>
       </div>
-      <Button className="mt-4 w-full" type="submit">
+      <Button className="mt-4 w-full" type="submit" disabled={disabled}>
         Create Your Smart Link
       </Button>
     </div>

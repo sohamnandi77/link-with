@@ -1,27 +1,13 @@
-import { MaxWidthWrapper } from "@/components/max-width-wrapper";
-import ClicksPerformance from "./clicks-performance";
-import TopCardsList from "./top-cards-list";
+import { MaxWidthWrapper } from "@/components/widgets/max-width-wrapper";
+import LinkAnalyticsCardWrapper from "./link-analytics-card-wrapper";
+import LinkDetailsCardWrapper from "./link-details-card-wrapper";
 
-const LinkDetails = () => {
+const LinkDetails = (props: { params: { linkId: string; slug: string } }) => {
+  const { linkId, slug } = props.params;
   return (
-    <MaxWidthWrapper className="my-10">
-      <div className="grid grid-cols-3 gap-x-9">
-        <div className="col-span-2 min-h-screen space-y-8 overflow-y-auto rounded-2xl border border-[#E6E6E6] bg-white p-6">
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-semibold">Link Analytics</div>
-          </div>
-          <div className="space-y-9">
-            <div>Filters</div>
-            <TopCardsList />
-            <ClicksPerformance />
-          </div>
-        </div>
-        <div className="sticky top-10 max-h-[600px] overflow-y-auto">
-          <div className="rounded-xl border border-[#E6E6E6] bg-white p-5">
-            <div className="text-xl font-semibold">Link Details</div>
-          </div>
-        </div>
-      </div>
+    <MaxWidthWrapper className="my-10 space-y-6">
+      <LinkDetailsCardWrapper linkId={linkId} slug={slug} />
+      <LinkAnalyticsCardWrapper />
     </MaxWidthWrapper>
   );
 };

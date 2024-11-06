@@ -101,7 +101,7 @@ export const PATCH = withWorkspace(
       // When root domain
       ...(link.keyword === "_root" && {
         domain: link.domain,
-        key: link.keyword,
+        keyword: link.keyword,
       }),
       expiredLinkByDate: link.expiredLinkByDate
         ? link.expiredLinkByDate.toString()
@@ -131,7 +131,7 @@ export const PATCH = withWorkspace(
       // if domain and key are the same, we don't need to check if the key exists
       skipKeyChecks:
         link.domain === updatedLink.domain &&
-        link.keyword.toLowerCase() === updatedLink.key?.toLowerCase(),
+        link.keyword.toLowerCase() === updatedLink.keyword?.toLowerCase(),
     });
 
     if (error) {

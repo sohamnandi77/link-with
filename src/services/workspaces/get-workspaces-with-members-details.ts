@@ -35,6 +35,9 @@ export const getWorkspacesWithMemberDetails = async (userId: string) => {
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
   } catch (error) {
     console.log("Error fetching workspaces:", error);

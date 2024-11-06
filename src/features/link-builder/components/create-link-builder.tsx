@@ -1,6 +1,5 @@
 "use client";
 
-import { MaxWidthWrapper } from "@/components/max-width-wrapper";
 import {
   Accordion,
   AccordionContent,
@@ -16,18 +15,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { MaxWidthWrapper } from "@/components/widgets/max-width-wrapper";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { createLinkBodySchema } from "@/schema/links";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Shuffle } from "lucide-react";
-import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
+import { useCreateLink } from "../api/use-create-link";
 import { LINK_BUILDER } from "../constants";
 import CustomizeLinkPreview from "./customize-link-preview";
-import GeoTargeting from "./geo-targeting";
 import DeviceTargeting from "./ios-targeting";
+import Keyword from "./keyword";
 import LinkCloaking from "./link-cloaking";
 import LinkExpiration from "./link-expiration";
 import LinkPreview from "./link-preview";
@@ -36,35 +35,18 @@ import SearchEngineIndexing from "./search-engine-indexing";
 import UTMBuilderWrapper from "./utm-builder-wrapper";
 
 const CreateLinkBuilder = () => {
-  const params = useParams();
   const form = useForm<z.infer<typeof createLinkBodySchema>>({
     resolver: zodResolver(createLinkBodySchema),
   });
   const [mount, setMount] = useState<boolean>(false);
+  const { mutate, isPending } = useCreateLink();
   const { isDesktop } = useMediaQuery();
   useEffect(() => {
     setMount(true);
   }, []);
 
   async function onSubmit(values: z.infer<typeof createLinkBodySchema>) {
-    try {
-      const res = await fetch(
-        `/api/links?workspaceSlug=${params?.slug as string}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ...values, domain: "lk.linkyatri.com" }),
-        },
-      );
-      if (res.status === 200) {
-        const data: unknown = await res.json();
-        console.log(data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    mutate(values);
   }
 
   return (
@@ -88,22 +70,7 @@ const CreateLinkBuilder = () => {
                 )}
               />
               <div className="mt-4">
-                <FormField
-                  control={form.control}
-                  name="keyword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center justify-between">
-                        <span>Short Link</span>
-                        <Shuffle className="size-4" />
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Paste your link" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <Keyword />
               </div>
               <div className="my-6">
                 <span className="text-xl">Link Customisation</span>
@@ -220,7 +187,7 @@ const CreateLinkBuilder = () => {
                     <DeviceTargeting />
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem
+                {/* <AccordionItem
                   value={LINK_BUILDER.GEO_TARGETING.id}
                   className="rounded-xl border border-[#E6E6E6]"
                 >
@@ -237,7 +204,7 @@ const CreateLinkBuilder = () => {
                   <AccordionContent className="px-6">
                     <GeoTargeting />
                   </AccordionContent>
-                </AccordionItem>
+                </AccordionItem> */}
                 <AccordionItem
                   value={LINK_BUILDER.LINK_CLOAKING.id}
                   className="rounded-xl border border-[#E6E6E6]"
@@ -277,7 +244,7 @@ const CreateLinkBuilder = () => {
               </Accordion>
             </div>
             <div className="sticky top-10 max-h-[600px] overflow-y-auto">
-              <LinkPreview />
+              <LinkPreview disabled={isPending} />
               <div className="mt-6 rounded-xl border border-[#E6E6E6] bg-white p-5">
                 Add Tags
               </div>
